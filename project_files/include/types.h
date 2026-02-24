@@ -68,6 +68,18 @@ typedef struct {
     size_t abgefertigte_wartende;
     size_t belegung;
     size_t warteschlangenlaenge;
+    // Für Berechnungen über die Zeit:
+    size_t step_count;
+    size_t belegung_prev;
+
+    size_t sum_belegung;
+    size_t sum_warteschlange;
+    size_t max_warteschlange;
+
+    size_t sum_restparkdauer;
+    size_t count_restparkdauer;  // Anzahl Samples
+
+    size_t vollauslastung_steps; // steps mit belegung == kapazitaet
 } Stats;
 
 #endif // TYPES_H
