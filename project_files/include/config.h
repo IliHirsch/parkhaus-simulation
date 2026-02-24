@@ -5,11 +5,9 @@
 #include <stddef.h>
 #include "types.h"
 
-/* Funktionsprototypen folgen */
-
-#endif // CONFIG_H
-
-/* ===== Simulations-Konfiguration ===== */
+/* =========================
+   Simulations-Konfiguration
+   ========================= */
 
 typedef struct {
     size_t anzahl_stellplaetze;
@@ -39,9 +37,6 @@ bool config_read_from_terminal(SimConfig* cfg);
 
 /**
  * @brief Validiert die Simulationsparameter.
- *
- * @param[in] cfg  Zu prüfende Konfiguration.
- * @return true wenn alle Werte gültig sind, sonst false.
  */
 bool config_validate(const SimConfig* cfg);
 /*
@@ -52,3 +47,5 @@ bool config_validate(const SimConfig* cfg);
  * - check: 0 <= ankunft_wahrscheinlichkeit_prozent <= 100
  * - return true/false
  */
+
+#endif // CONFIG_H
