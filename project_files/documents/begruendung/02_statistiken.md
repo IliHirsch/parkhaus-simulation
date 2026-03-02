@@ -9,3 +9,14 @@ Die durchschnittliche Restparkdauer ermöglicht eine Abschätzung der kurzfristi
 
 Insgesamt erlauben diese Kennzahlen eine strukturierte Analyse von Auslastung und Verkehrsfluss innerhalb einer Simulation.
 
+
+
+### Begründung für Endstatistiken
+
+Die Endstatistiken dienen der zusammenfassenden Bewertung des gesamten Simulationsverlaufs. Durchschnittliche Belegung, Auslastung und der Anteil der Zeitschritte mit Vollauslastung zeigen, ob die vorhandene Kapazität langfristig ausreichend ist oder regelmäßig an ihre Grenzen stößt.
+
+Die Kennzahlen zur Warteschlange (maximale und durchschnittliche Länge sowie Wartezeit) ermöglichen eine Bewertung von Engpässen und Nutzerbelastung. Der Anteil der Wartezeit an der Gesamtzeit setzt die Wartephase in Relation zur Parkdauer und schafft eine realistische Vergleichsgröße.
+
+Die durchschnittliche Parkdauer beeinflusst maßgeblich die Auslastung und die Entstehung möglicher Engpässe.
+
+Die geschätzte Anzahl zusätzlicher Parkplätze liefert schließlich eine quantitative Grundlage für mögliche Erweiterungen und zukünftige Optimierungen.
