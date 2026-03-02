@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.6.0">
+  <diagram name="Seite-1" id="KlB3DK1X0hXDnrr8-6vv">
+    <mxGraphModel dx="1281" dy="574" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-2" edge="1" parent="1" source="X3Ra_W0t9OqdejHh8lCx-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YOcqkgjPV3PFYlGuKJLp-1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="X3Ra_W0t9OqdejHh8lCx-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Start" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-4" edge="1" parent="1" source="YOcqkgjPV3PFYlGuKJLp-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="414" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-5" connectable="0" parent="YOcqkgjPV3PFYlGuKJLp-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="True" vertex="1">
+          <mxGeometry relative="1" x="-0.2114" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-15" edge="1" parent="1" source="YOcqkgjPV3PFYlGuKJLp-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="YOcqkgjPV3PFYlGuKJLp-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-16" connectable="0" parent="YOcqkgjPV3PFYlGuKJLp-15" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="False" vertex="1">
+          <mxGeometry relative="1" x="-0.219" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-1" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Warteschlange&amp;nbsp;&lt;div&gt;nicht leer&lt;div&gt;&amp;amp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;freier Platz&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="156" x="336" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-8" edge="1" parent="1" source="YOcqkgjPV3PFYlGuKJLp-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YOcqkgjPV3PFYlGuKJLp-7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Fahrzeug aus der Warteschlange holen" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-10" edge="1" parent="1" source="YOcqkgjPV3PFYlGuKJLp-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YOcqkgjPV3PFYlGuKJLp-9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="freien Stellplatz suchen" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-12" edge="1" parent="1" source="YOcqkgjPV3PFYlGuKJLp-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YOcqkgjPV3PFYlGuKJLp-11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Fahrzeug zuweisen" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="524.5" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-13" edge="1" parent="1" source="YOcqkgjPV3PFYlGuKJLp-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="YOcqkgjPV3PFYlGuKJLp-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="414" y="710" />
+              <mxPoint x="560" y="710" />
+              <mxPoint x="560" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="belegte Stellplätze ++" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="YOcqkgjPV3PFYlGuKJLp-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Ende" vertex="1">
+          <mxGeometry height="60" width="120" x="190" y="250" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
