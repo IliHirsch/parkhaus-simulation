@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "types.h"
-#include "vehicle.h"
 
 /* =========================
    Queue (Warteschlange)
