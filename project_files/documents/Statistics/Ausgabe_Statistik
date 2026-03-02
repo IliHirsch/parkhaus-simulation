@@ -4,25 +4,23 @@ Zur Veranschaulichung der geplanten Auswertungen wurden Beispieldateien erstellt
 Laufende Statistiken (pro Zeitschritt):
 Nach jedem Zeitschritt werden im Terminal die aktuellen Simulationsdaten ausgegeben. Diese umfassen:
 
-Zeit: aktueller Zeitschritt der Simulation.
+    -Zeit: aktueller Zeitschritt der Simulation.
 
-Belegung: Anzahl der aktuell belegten Stellplätze.
+    -Belegung: Anzahl der aktuell belegten Stellplätze.
 
-Auslastung: prozentualer Anteil belegter Stellplätze bezogen auf die Gesamtkapazität.
+    -Auslastung: prozentualer Anteil belegter Stellplätze bezogen auf die Gesamtkapazität.
 
-Neu: Anzahl neu angekommener Fahrzeuge im aktuellen Zeitschritt.
+    -Neu: Anzahl neu angekommener Fahrzeuge im aktuellen Zeitschritt.
 
-Verlassen: Anzahl der Fahrzeuge, die das Parkhaus im aktuellen Zeitschritt verlassen haben.
+    -Verlassen: Anzahl der Fahrzeuge, die das Parkhaus im aktuellen Zeitschritt verlassen haben.
 
-Wartende rein: Anzahl der Fahrzeuge, die aus der Warteschlange einen freien Stellplatz erhalten haben.
+    -Wartende rein: Anzahl der Fahrzeuge, die aus der Warteschlange einen freien Stellplatz erhalten haben.
 
-Belegungsänderung: Differenz der Belegung zum vorherigen Zeitschritt (Belegung(t) − Belegung(t−1)); positiver Wert zeigt eine Aufbauphase, 0 eine Sättigungsphase und   ein negativer Wert eine Entlastungsphase.
+    -Belegungsänderung: Differenz der Belegung zum vorherigen Zeitschritt (Belegung(t) − Belegung(t−1)); positiver Wert zeigt eine Aufbauphase, 0 eine Sättigungsphase  und ein negativer Wert eine Entlastungsphase.
 
-Warteschlange: Anzahl der aktuell vor dem Parkhaus wartenden Fahrzeuge.
+    -Warteschlange: Anzahl der aktuell vor dem Parkhaus wartenden Fahrzeuge.
 
-Ø Restparkdauer: Durchschnitt der verbleibenden Parkdauer aller parkenden Fahrzeuge; dient als Indikator für die erwartbare zeitliche Entwicklung der Belegung.
-
-
+    -Ø Restparkdauer: Durchschnitt der verbleibenden Parkdauer aller parkenden Fahrzeuge; dient als Indikator für die erwartbare zeitliche Entwicklung der Belegung.
 
 
 Diese Informationen dienen der unmittelbaren Beobachtung des Verkehrsflusses sowie der Entwicklung von Belegung und Warteschlange.
@@ -47,9 +45,6 @@ Folgende Kennwerte werden berechnet:
     -Geschätzte zusätzliche Stellplätze: Abschätzung der zusätzlich benötigten Kapazität zur Reduzierung von Warteschlangen.
 
 Diese Endstatistiken ermöglichen eine Bewertung der Kapazitätsauslastung, der Verkehrsbelastung sowie möglicher Engpässe des Parkhauses.
-
-
-
 
 
 
