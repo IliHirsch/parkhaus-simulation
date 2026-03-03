@@ -5,6 +5,14 @@
 #include <stddef.h>
 #include "types.h"
 
+/**
+ * @brief Öffnet eine Log-Datei zum Schreiben (überschreibt vorhandene Datei).
+ *
+ * Speichert intern ein globales FILE-Handle (in io.c).
+ *
+ * @param[in] path Pfad zur Log-Datei.
+ * @return true wenn Datei geöffnet werden konnte, sonst false.
+ */
 bool io_open_log(const char* path);
 /*
  * FUNCTION io_open_log(path) RETURNS ok
@@ -24,6 +32,9 @@ bool io_open_log(const char* path);
  * END FUNCTION
  */
 
+/**
+ * @brief Schließt die Log-Datei, falls geöffnet.
+ */
 void io_close_log(void);
 /*
  * FUNCTION io_close_log()
@@ -34,6 +45,12 @@ void io_close_log(void);
  * END FUNCTION
  */
 
+/**
+ * @brief Schreibt die Step-Daten in die Log-Datei (falls geöffnet).
+ *
+ * @param[in] s Aktueller Stats-Zustand (nach stats_update_step).
+ * @param[in] step Aktueller Zeitschritt.
+ */
 void io_log_step(const Stats* s, int step);
 /*
  * FUNCTION io_log_step(s, step)
@@ -51,6 +68,11 @@ void io_log_step(const Stats* s, int step);
  * END FUNCTION
  */
 
+/**
+ * @brief Schreibt die Abschlussstatistiken in die Log-Datei (falls geöffnet).
+ *
+ * @param[in] s Finaler Stats-Zustand.
+ */
 void io_log_final(const Stats* s);
 /*
  * FUNCTION io_log_final(s)

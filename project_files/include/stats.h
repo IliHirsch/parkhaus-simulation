@@ -10,6 +10,11 @@
    Statistiken
    ========================= */
 
+/**
+ * @brief Initialisiert alle Statistikfelder mit 0.
+ *
+ * @param[out] s Stats-Struktur, die initialisiert werden soll.
+ */
 void stats_init(Stats* s);
 /*
  * FUNCTION stats_init(s)
@@ -41,6 +46,13 @@ void stats_init(Stats* s);
  * END FUNCTION
  */
 
+/**
+ * @brief Setzt die Step-Zähler für den aktuellen Zeitschritt zurück.
+ *
+ * Reset betrifft nur Step-Werte (neu_angekommen, verlassen, abgefertigte_wartende).
+ *
+ * @param[in,out] s Stats-Struktur.
+ */
 void stats_reset_step(Stats* s);
 /*
  * FUNCTION stats_reset_step(s)
@@ -54,6 +66,16 @@ void stats_reset_step(Stats* s);
  * END FUNCTION
  */
 
+/**
+ * @brief Aktualisiert Momentanwerte und Aggregate nach einem Simulation-Step.
+ *
+ * Setzt belegung und warteschlangenlaenge anhand des aktuellen Zustands und führt Summen/Maxima fort.
+ *
+ * @param[in,out] s Stats-Struktur.
+ * @param[in] p Aktueller Parkhauszustand.
+ * @param[in] q Aktueller Queue-Zustand.
+ * @param[in] step Aktueller Zeitschritt (für mögliche Erweiterungen/Debug).
+ */
 void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step);
 /*
  * FUNCTION stats_update_step(s, p, q, step)
@@ -85,6 +107,14 @@ void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step);
  * END FUNCTION
  */
 
+/**
+ * @brief Gibt eine Zeile Step-Statistik auf der Konsole aus.
+ *
+ * Mindestens: belegung, warteschlangenlaenge, neu_angekommen, verlassen, abgefertigte_wartende.
+ *
+ * @param[in] s Stats-Struktur (nach stats_update_step).
+ * @param[in] step Aktueller Zeitschritt.
+ */
 void stats_print_step(const Stats* s, int step);
 /*
  * FUNCTION stats_print_step(s, step)
@@ -106,6 +136,13 @@ void stats_print_step(const Stats* s, int step);
  * END FUNCTION
  */
 
+/**
+ * @brief Gibt die Abschlussstatistiken der Simulation aus.
+ *
+ * Berechnet Durchschnittswerte/Maxima und ggf. Wartezeiten/Parkdauern.
+ *
+ * @param[in] s Stats-Struktur nach Ende der Simulation.
+ */
 void stats_print_final(const Stats* s);
 /*
  * FUNCTION stats_print_final(s)
