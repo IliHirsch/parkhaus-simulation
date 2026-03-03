@@ -104,16 +104,3 @@ Die Zahlen dienen der Illustration des Formats und zeigen, dass sowohl
 Verlauf als auch Endzustand nachvollziehbar dokumentiert werden.
 
 ------------------------------------------------------------------------
-
-## 5. Zusammenfassung
-
-Das gewählte Ausgabeformat erfüllt folgende Anforderungen:
-
--   klare Trennung zwischen Step- und Endstatistik\
--   vollständige Rückführbarkeit auf interne Datenstrukturen\
--   reproduzierbare Testausgabe durch festen Seed\
--   automatische Dokumentation in einer Log-Datei\
--   direkte Prüfbarkeit im Terminal
-
-Damit ist der Aufgabenpunkt „Format der geplanten Ausgabe mit Testdaten"
-vollständig erfüllt.

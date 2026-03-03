@@ -146,6 +146,4 @@ Durch:
 wird eine strukturierte, nachvollziehbare und wartbare Architektur
 geschaffen.
 
-Die gewählte Struktur unterstützt sowohl die Anforderungen der
-Aufgabenstellung als auch eine spätere vollständige Implementierung der
-Simulation.
+

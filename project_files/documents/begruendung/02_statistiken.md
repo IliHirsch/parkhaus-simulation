@@ -25,7 +25,7 @@ Folgende Step‑Kennzahlen werden pro Zeitschritt geführt und ausgegeben:
 - **Verlassen**: Anzahl abgefahrener Fahrzeuge in diesem Step (`Stats.verlassen`).
 - **Queue→Park**: Anzahl Fahrzeuge, die aus der Warteschlange eingeparkt wurden (`Stats.abgefertigte_wartende`).
 
-Optional (falls im Ausgabeformat vorgesehen) kann zusätzlich ein Restparkdauer‑Wert ausgegeben werden (siehe nächster Abschnitt).
+Optional kann zusätzlich ein Restparkdauer‑Wert ausgegeben werden (siehe nächster Abschnitt).
 
 ### Hinweis zur „Ø Restparkdauer“
 Im aktuellen Statistikmodell werden Restparkdauern als **Samples** gesammelt: In jedem Step werden die Restparkdauern **aller aktuell parkenden Fahrzeuge** zur Summe addiert und der Sample‑Zähler erhöht. Dadurch entsteht ein **kumulativer Durchschnitt über alle bisher gesammelten Restparkdauer‑Samples**:
@@ -51,4 +51,4 @@ Nach Ende der Simulation werden zusammenfassende Kennzahlen berechnet, die eine 
 - Parkdauer wird direkt bei der Fahrzeugerzeugung erfasst und bildet damit die zugrundeliegende Nachfrage/Last der Simulation ab.
 
 ## Abgrenzung (was bewusst nicht als feste Statistik zugesichert wird)
-Kennwerte wie **prozentuale Auslastung**, **Belegungsänderung** oder **Anteil Wartezeit an Gesamtzeit** sind mit dem aktuellen `Stats`‑Layout nicht als verpflichtende Ausgabewerte implementiert. Solche Werte können zwar später ergänzt werden, werden in der Abgabe jedoch nur dann genannt, wenn sie im tatsächlichen Ausgabecode auch berechnet und ausgegeben werden.
+Kennwerte wie **prozentuale Auslastung**, **Belegungsänderung** oder **Anteil Wartezeit an Gesamtzeit** sind mit dem aktuellen `Stats`‑Layout nicht als verpflichtende Ausgabewerte implementiert.

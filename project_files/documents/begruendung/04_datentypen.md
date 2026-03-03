@@ -55,7 +55,7 @@ Ein Fahrzeug ist die zentrale Entität der Simulation.
 -   `restparkdauer` → wird pro Zeitschritt reduziert
 -   `einfahrtzeit` → notwendig zur Berechnung der Wartezeit
 
-Die Struktur ist bewusst kompakt gehalten und enthält nur
+Die Struktur ist kompakt gehalten und enthält nur
 simulationsrelevante Informationen.
 
 ------------------------------------------------------------------------

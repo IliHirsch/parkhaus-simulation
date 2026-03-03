@@ -62,7 +62,7 @@ Jedes Modul ist in `.h` (Schnittstelle) und `.c` (Implementierung/Pseudocode) ge
   4) Queue abarbeiten (Parking + Queue)  
   5) Stats aktualisieren + Ausgabe + Logging
 
-**Begründung:** Trennung zwischen *Orchestrierung* (simulation) und *Fachlogik* (parking/queue/stats). So bleibt der Ablauf an einer Stelle sichtbar.
+**Begründung:** Trennung zwischen Simulation und parking/queue/stats (Fachlogik). So bleibt der Ablauf an einer Stelle sichtbar.
 
 ---
 
@@ -101,7 +101,7 @@ Jedes Modul ist in `.h` (Schnittstelle) und `.c` (Implementierung/Pseudocode) ge
   - Samples (Wartezeit, Parkdauer, Restparkdauer)
 - Gibt Step-Zeilen und Finale Werte auf der Konsole aus.
 
-**Begründung:** Alle Kennzahlen liegen zentral an einem Ort. Dadurch bleibt die Simulation logisch schlank und Statistiken können erweitert werden, ohne andere Module anzufassen.
+**Begründung:** Alle Kennzahlen liegen zentral an einem Ort. Dadurch bleibt die Simulation logisch minimal und Statistiken können erweitert werden, ohne andere Module anzufassen.
 
 ---
 
