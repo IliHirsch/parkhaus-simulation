@@ -3,96 +3,105 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include "types.h"
 
-/* =========================
-   Queue (Warteschlange)
-   Dynamisch (Linked List)
-   ========================= */
-
-/**
- * @brief Initialisiert eine leere Queue.
- *
- * @param[out] q Queue-Instanz.
- */
 void queue_init(Queue* q);
 /*
- * PSEUDOCODE:
- * - q->head = NULL
- * - q->tail = NULL
- * - q->size = 0
+ * FUNCTION queue_init(q)
+ * INPUT  q
+ * OUTPUT q initialisiert (leer)
+ *
+ * q->head <- NULL
+ * q->tail <- NULL
+ * q->size <- 0
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Gibt den gesamten dynamischen Speicher der Queue frei.
- *
- * @param[in,out] q Queue-Instanz.
- */
 void queue_free(Queue* q);
 /*
- * PSEUDOCODE:
- * - while head != NULL:
- *     tmp = head
- *     head = head->next
+ * FUNCTION queue_free(q)
+ * INPUT  q
+ * OUTPUT Speicher freigegeben, Queue leer
+ *
+ * WHILE q->head != NULL DO
+ *     tmp <- q->head
+ *     q->head <- q->head->next
  *     free(tmp)
- * - tail = NULL
- * - size = 0
+ * END WHILE
+ *
+ * q->tail <- NULL
+ * q->size <- 0
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Fügt ein Fahrzeug hinten in die Queue ein.
- *
- * @param[in,out] q Queue-Instanz.
- * @param[in]     v Fahrzeug.
- * @return true wenn erfolgreich, sonst false (malloc fehlgeschlagen).
- */
 bool queue_push(Queue* q, Vehicle v);
 /*
- * PSEUDOCODE:
- * - node = malloc(sizeof(QueueNode))
- * - if node == NULL: return false
- * - node->fahrzeug = v; node->next = NULL
- * - if q empty: head=tail=node else: tail->next=node; tail=node
- * - size++
- * - return true
+ * FUNCTION queue_push(q, v) RETURNS ok
+ * INPUT  q, v
+ * OUTPUT v am Ende eingefügt (FIFO)
+ *
+ * node <- malloc(sizeof(QueueNode))
+ * IF node == NULL THEN
+ *     RETURN false
+ * END IF
+ *
+ * node->fahrzeug <- v
+ * node->next <- NULL
+ *
+ * IF q->tail == NULL THEN
+ *     q->head <- node
+ *     q->tail <- node
+ * ELSE
+ *     q->tail->next <- node
+ *     q->tail <- node
+ * END IF
+ *
+ * q->size <- q->size + 1
+ * RETURN true
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Entfernt das vorderste Fahrzeug aus der Queue.
- *
- * @param[in,out] q Queue-Instanz.
- * @param[out]    out_v Ziel für das entfernte Fahrzeug.
- * @return true wenn ein Element entfernt wurde, sonst false (Queue leer).
- */
 bool queue_pop(Queue* q, Vehicle* out_v);
 /*
- * PSEUDOCODE:
- * - if empty: return false
- * - node = head
- * - *out_v = node->fahrzeug
- * - head = head->next
- * - if head == NULL: tail = NULL
- * - free(node)
- * - size--
- * - return true
+ * FUNCTION queue_pop(q, out_v) RETURNS ok
+ * INPUT  q, out_v
+ * OUTPUT v entfernt (FIFO) und in *out_v gespeichert
+ *
+ * IF q->head == NULL THEN
+ *     RETURN false
+ * END IF
+ *
+ * node <- q->head
+ * *out_v <- node->fahrzeug
+ * q->head <- node->next
+ *
+ * IF q->head == NULL THEN
+ *     q->tail <- NULL
+ * END IF
+ *
+ * free(node)
+ * q->size <- q->size - 1
+ * RETURN true
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Liefert die aktuelle Anzahl wartender Fahrzeuge.
- */
 size_t queue_size(const Queue* q);
 /*
- * PSEUDOCODE:
- * - return q->size
+ * FUNCTION queue_size(q) RETURNS n
+ * RETURN q->size
+ * END FUNCTION
  */
 
-/**
- * @brief Prüft ob Queue leer ist.
- */
 bool queue_is_empty(const Queue* q);
 /*
- * PSEUDOCODE:
- * - return (q->size == 0)
+ * FUNCTION queue_is_empty(q) RETURNS empty
+ * RETURN (q->size == 0)
+ * END FUNCTION
  */
 
 #endif // QUEUE_H

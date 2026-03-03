@@ -4,59 +4,94 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "types.h"
-#include "stats.h"
 
-/* =========================
-   I/O (Konsole + Logfile)
-   ========================= */
-
-/**
- * @brief Öffnet die Log-Datei zum Schreiben (überschreibt vorhandene Datei).
- *
- * @param[in] path Pfad zur Datei (z.B. "project_files/data/log.txt").
- * @return true wenn erfolgreich, sonst false.
- */
 bool io_open_log(const char* path);
 /*
- * PSEUDOCODE:
- * - file = fopen(path, "w")
- * - if file == NULL: return false
- * - store file handle (global oder Kontext)
- * - return true
+ * FUNCTION io_open_log(path) RETURNS ok
+ * INPUT  path
+ * OUTPUT Log-Handle global gespeichert, true/false
+ *
+ * file <- CALL fopen(path, "w")
+ * IF file == NULL THEN RETURN false END IF
+ *
+ * g_log <- file
+ *
+ * WRITE to g_log: "=== Parkhaus-Simulation Log ===\n"
+ * WRITE to g_log: "Format: Step | neu | verlassen | queue->park | belegung | queue\n"
+ *
+ * RETURN true
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Schließt die Log-Datei, falls geöffnet.
- */
 void io_close_log(void);
 /*
- * PSEUDOCODE:
- * - if file != NULL: fclose(file); file = NULL
+ * FUNCTION io_close_log()
+ * IF g_log != NULL THEN
+ *     CALL fclose(g_log)
+ *     g_log <- NULL
+ * END IF
+ * END FUNCTION
  */
 
-/**
- * @brief Schreibt Zeitschritt-Statistiken in die Log-Datei.
- *
- * @param[in] s Statistikdaten.
- * @param[in] step Zeitschritt.
- */
 void io_log_step(const Stats* s, int step);
 /*
- * PSEUDOCODE:
- * - if file == NULL: return
- * - fprintf in einem klaren, reproduzierbaren Format
+ * FUNCTION io_log_step(s, step)
+ * IF g_log == NULL THEN RETURN END IF
+ *
+ * WRITE to g_log:
+ *   "Step %d | neu=%zu | verlassen=%zu | queue->park=%zu | belegung=%zu | queue=%zu\n",
+ *   step, s->neu_angekommen, s->verlassen, s->abgefertigte_wartende, s->belegung, s->warteschlangenlaenge
+ *
+ * IF s->count_restparkdauer > 0 THEN
+ *     avg_rest <- s->sum_restparkdauer / s->count_restparkdauer
+ *     WRITE to g_log: "    AvgRest=%zu\n", avg_rest
+ * END IF
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Schreibt Endstatistiken in die Log-Datei.
- *
- * @param[in] s Statistikdaten.
- */
 void io_log_final(const Stats* s);
 /*
- * PSEUDOCODE:
- * - if file == NULL: return
- * - fprintf final summary
+ * FUNCTION io_log_final(s)
+ * IF g_log == NULL THEN RETURN END IF
+ *
+ * WRITE to g_log: "===== FINAL STATS =====\n"
+ *
+ * IF s->step_count == 0 THEN
+ *     WRITE to g_log: "Keine Schritte simuliert.\n"
+ *     RETURN
+ * END IF
+ *
+ * avg_belegung <- s->sum_belegung / s->step_count
+ * avg_queue <- s->sum_warteschlange / s->step_count
+ * vollauslastung_prozent <- (s->vollauslastung_steps * 100) / s->step_count
+ *
+ * WRITE to g_log: "Ø Belegung: %zu\n", avg_belegung
+ * WRITE to g_log: "Ø Warteschlange: %zu\n", avg_queue
+ * WRITE to g_log: "Max Warteschlange: %zu\n", s->max_warteschlange
+ * WRITE to g_log: "Vollauslastung: %zu%% der Schritte\n", vollauslastung_prozent
+ *
+ * IF s->count_wartezeit > 0 THEN
+ *     avg_warte <- s->sum_wartezeit / s->count_wartezeit
+ *     WRITE to g_log: "Ø Wartezeit (Queue->Park): %zu\n", avg_warte
+ * ELSE
+ *     WRITE to g_log: "Ø Wartezeit: 0 Samples\n"
+ * END IF
+ *
+ * IF s->count_parkdauer > 0 THEN
+ *     avg_park <- s->sum_parkdauer / s->count_parkdauer
+ *     WRITE to g_log: "Ø Parkdauer: %zu\n", avg_park
+ * ELSE
+ *     WRITE to g_log: "Ø Parkdauer: 0 Samples\n"
+ * END IF
+ *
+ * IF s->count_restparkdauer > 0 THEN
+ *     avg_rest <- s->sum_restparkdauer / s->count_restparkdauer
+ *     WRITE to g_log: "Ø Restparkdauer (Samples): %zu\n", avg_rest
+ * END IF
+ *
+ * END FUNCTION
  */
 
 #endif // IO_H

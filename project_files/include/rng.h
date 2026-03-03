@@ -2,41 +2,61 @@
 #define RNG_H
 
 #include <stdbool.h>
-#include <stddef.h>
+#include <stdlib.h>
 
-/* =========================
-   Zufallsfunktionen
-   ========================= */
-
-/**
- * @brief Setzt den Zufalls-Seed.
- */
 void rng_seed(unsigned int seed);
 /*
- * PSEUDOCODE:
- * - srand(seed)
+ * FUNCTION rng_seed(seed)
+ * INPUT  seed
+ * OUTPUT Zufallszahlengenerator initialisiert
+ *
+ * CALL srand(seed)
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Liefert Zufallszahl im Bereich [min_incl, max_incl].
- */
 int rng_int(int min_incl, int max_incl);
 /*
- * PSEUDOCODE:
- * - if max < min: swap
- * - r = rand()
- * - return min + (r % (max - min + 1))
+ * FUNCTION rng_int(min_incl, max_incl) RETURNS r
+ * INPUT  min_incl, max_incl
+ * OUTPUT r im Bereich [min_incl .. max_incl]
+ *
+ * IF max_incl < min_incl THEN
+ *     tmp <- min_incl
+ *     min_incl <- max_incl
+ *     max_incl <- tmp
+ * END IF
+ *
+ * range <- (max_incl - min_incl + 1)
+ * raw <- rand()
+ * r <- min_incl + (raw MOD range)
+ *
+ * RETURN r
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Entscheidet mit gegebener Prozentwahrscheinlichkeit.
- */
 bool rng_chance_percent(int percent);
 /*
- * PSEUDOCODE:
- * - clamp percent to [0..100]
- * - r = rng_int(0, 99)
- * - return (r < percent)
+ * FUNCTION rng_chance_percent(percent) RETURNS ok
+ * INPUT  percent
+ * OUTPUT true mit Wahrscheinlichkeit percent%, sonst false
+ *
+ * IF percent < 0 THEN
+ *     percent <- 0
+ * ELSE IF percent > 100 THEN
+ *     percent <- 100
+ * END IF
+ *
+ * r <- CALL rng_int(0, 99)
+ *
+ * IF r < percent THEN
+ *     RETURN true
+ * ELSE
+ *     RETURN false
+ * END IF
+ *
+ * END FUNCTION
  */
 
 #endif // RNG_H

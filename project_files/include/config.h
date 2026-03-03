@@ -3,11 +3,6 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include "types.h"
-
-/* =========================
-   Simulations-Konfiguration
-   ========================= */
 
 typedef struct {
     size_t anzahl_stellplaetze;
@@ -17,35 +12,50 @@ typedef struct {
     unsigned int seed;
 } SimConfig;
 
-/**
- * @brief Liest alle Simulationsparameter über das Terminal ein.
- *
- * @param[out] cfg  Zielstruktur für die Parameter.
- * @return true wenn alle Eingaben erfolgreich gelesen wurden, sonst false.
- */
 bool config_read_from_terminal(SimConfig* cfg);
 /*
- * PSEUDOCODE:
- * - prompt & read: anzahl_stellplaetze
- * - prompt & read: max_parkdauer
- * - prompt & read: sim_dauer_zeitschritte
- * - prompt & read: ankunft_wahrscheinlichkeit_prozent
- * - prompt & read: seed
- * - if validate(cfg) == false: return false
- * - return true
+ * FUNCTION config_read_from_terminal(cfg) RETURNS ok
+ * INPUT  cfg (out)
+ * OUTPUT cfg befüllt; true wenn Eingaben + Validierung ok, sonst false
+ *
+ * OUTPUT "Anzahl Stellplaetze: "
+ * READ cfg->anzahl_stellplaetze
+ *
+ * OUTPUT "Max. Parkdauer (in Zeitschritten): "
+ * READ cfg->max_parkdauer
+ *
+ * OUTPUT "Simulationsdauer (Anzahl Zeitschritte): "
+ * READ cfg->sim_dauer_zeitschritte
+ *
+ * OUTPUT "Ankunftswahrscheinlichkeit pro Zeitschritt (0..100): "
+ * READ cfg->ankunft_wahrscheinlichkeit_prozent
+ *
+ * OUTPUT "Seed (Zufallszahlengenerator): "
+ * READ cfg->seed
+ *
+ * ok <- CALL config_validate(cfg)
+ * IF ok == false THEN RETURN false END IF
+ *
+ * RETURN true
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Validiert die Simulationsparameter.
- */
 bool config_validate(const SimConfig* cfg);
 /*
- * PSEUDOCODE:
- * - check: anzahl_stellplaetze > 0
- * - check: max_parkdauer > 0
- * - check: sim_dauer_zeitschritte > 0
- * - check: 0 <= ankunft_wahrscheinlichkeit_prozent <= 100
- * - return true/false
+ * FUNCTION config_validate(cfg) RETURNS ok
+ * INPUT  cfg
+ * OUTPUT true wenn gültig, sonst false
+ *
+ * IF cfg->anzahl_stellplaetze <= 0 THEN RETURN false END IF
+ * IF cfg->max_parkdauer <= 0 THEN RETURN false END IF
+ * IF cfg->sim_dauer_zeitschritte <= 0 THEN RETURN false END IF
+ * IF cfg->ankunft_wahrscheinlichkeit_prozent < 0 THEN RETURN false END IF
+ * IF cfg->ankunft_wahrscheinlichkeit_prozent > 100 THEN RETURN false END IF
+ *
+ * RETURN true
+ *
+ * END FUNCTION
  */
 
 #endif // CONFIG_H

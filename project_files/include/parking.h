@@ -4,103 +4,122 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "types.h"
-#include "vehicle.h"
 #include "queue.h"
 #include "config.h"
 #include "stats.h"
+#include "rng.h"
 
-/* =========================
-   Parkhaus-Verwaltung
-   ========================= */
-
-/**
- * @brief Initialisiert das Parkhaus.
- *
- * @param[out] p          Parkhaus-Struktur
- * @param[in]  kapazitaet Anzahl Stellplätze
- */
 void parking_init(ParkingLot* p, size_t kapazitaet);
 /*
- * PSEUDOCODE:
- * - p->kapazitaet = kapazitaet
- * - p->belegte_plaetze = 0
- * - allocate memory for slots
- * - for each slot:
- *     slot.belegt = false
+ * FUNCTION parking_init(p, kapazitaet)
+ * INPUT  p, kapazitaet
+ * OUTPUT p initialisiert (Slots allokiert und auf frei gesetzt)
+ *
+ * p->kapazitaet <- kapazitaet
+ * p->belegte_plaetze <- 0
+ *
+ * allocate p->slots
+ *
+ * FOR i <- 0 TO kapazitaet-1 DO
+ *     p->slots[i].belegt <- false
+ * END FOR
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Gibt Speicher des Parkhauses frei.
- */
 void parking_free(ParkingLot* p);
 /*
- * PSEUDOCODE:
- * - free(p->slots)
+ * FUNCTION parking_free(p)
+ * free(p->slots)
+ * p->slots <- NULL
+ * p->kapazitaet <- 0
+ * p->belegte_plaetze <- 0
+ * END FUNCTION
  */
 
-/**
- * @brief Sucht freien Stellplatz.
- *
- * @return Index oder -1 wenn keiner frei
- */
 int parking_find_free_slot(const ParkingLot* p);
 /*
- * PSEUDOCODE:
- * - for i in 0..kapazitaet-1:
- *     if slot[i] not belegt:
- *         return i
- * - return -1
+ * FUNCTION parking_find_free_slot(p) RETURNS index
+ * FOR i <- 0 TO p->kapazitaet-1 DO
+ *     IF p->slots[i].belegt == false THEN RETURN i END IF
+ * END FOR
+ * RETURN -1
+ * END FUNCTION
  */
 
-/**
- * @brief Behandelt neu ankommendes Fahrzeug.
- *
- * @return SIM_OK oder SIM_KFZ_WARTEN
- */
 SimStatus parking_handle_arrival(
     ParkingLot* p,
     Queue* q,
     const SimConfig* cfg,
     Stats* stats,
-    int current_time
+    int current_time,
+    unsigned int* next_vehicle_id
 );
 /*
- * PSEUDOCODE:
- * - stats->neu_angekommen++
- * - vehicle initialisieren (id, restparkdauer, einfahrtzeit)
- * - slot = parking_find_free_slot()
- * - if slot == -1:
- *     queue_push(q, vehicle)
- *     return SIM_KFZ_WARTEN
- * - else:
- *     p->slots[slot] = vehicle
- *     p->slots[slot].belegt = true
- *     p->belegte_plaetze++
- *     return SIM_OK
+ * FUNCTION parking_handle_arrival(p, q, cfg, stats, current_time, next_vehicle_id) RETURNS status
+ * stats->neu_angekommen <- stats->neu_angekommen + 1
+ *
+ * v.id <- *next_vehicle_id
+ * *next_vehicle_id <- *next_vehicle_id + 1
+ *
+ * v.restparkdauer <- CALL rng_int(1, cfg->max_parkdauer)
+ * v.einfahrtzeit <- current_time
+ *
+ * stats->sum_parkdauer <- stats->sum_parkdauer + v.restparkdauer
+ * stats->count_parkdauer <- stats->count_parkdauer + 1
+ *
+ * slot <- CALL parking_find_free_slot(p)
+ * IF slot == -1 THEN
+ *     CALL queue_push(q, v)
+ *     RETURN SIM_KFZ_WARTEN
+ * ELSE
+ *     p->slots[slot].fahrzeug <- v
+ *     p->slots[slot].belegt <- true
+ *     p->belegte_plaetze <- p->belegte_plaetze + 1
+ *     RETURN SIM_OK
+ * END IF
+ *
+ * END FUNCTION
  */
 
-/**
- * @brief Reduziert Parkdauer und entfernt Fahrzeuge.
- */
-void parking_process_departures(
-    ParkingLot* p,
-    Queue* q,
-    Stats* stats
-);
+void parking_process_departures(ParkingLot* p, Stats* stats);
 /*
- * PSEUDOCODE:
- * - for each slot:
- *     if belegt:
- *         restparkdauer--
- *         if restparkdauer == 0:
- *             freigeben
- *             belegte_plaetze--
- *             stats->verlassen++
- *             if queue not empty:
- *                 pop vehicle
- *                 auf slot setzen
- *                 belegte_plaetze++
- *                 stats->abgefertigte_wartende++
+ * FUNCTION parking_process_departures(p, stats)
+ * FOR i <- 0 TO p->kapazitaet-1 DO
+ *     IF p->slots[i].belegt THEN
+ *         p->slots[i].fahrzeug.restparkdauer <- p->slots[i].fahrzeug.restparkdauer - 1
+ *         IF p->slots[i].fahrzeug.restparkdauer <= 0 THEN
+ *             p->slots[i].belegt <- false
+ *             p->belegte_plaetze <- p->belegte_plaetze - 1
+ *             stats->verlassen <- stats->verlassen + 1
+ *         END IF
+ *     END IF
+ * END FOR
+ * END FUNCTION
+ */
+
+void parking_process_queue(ParkingLot* p, Queue* q, Stats* stats, int current_time);
+/*
+ * FUNCTION parking_process_queue(p, q, stats, current_time)
+ * WHILE CALL queue_is_empty(q) == false DO
+ *     slot <- CALL parking_find_free_slot(p)
+ *     IF slot == -1 THEN BREAK END IF
+ *
+ *     ok <- CALL queue_pop(q, &v)
+ *     IF ok == false THEN BREAK END IF
+ *
+ *     wartezeit <- current_time - v.einfahrtzeit
+ *     stats->sum_wartezeit <- stats->sum_wartezeit + wartezeit
+ *     stats->count_wartezeit <- stats->count_wartezeit + 1
+ *
+ *     p->slots[slot].fahrzeug <- v
+ *     p->slots[slot].belegt <- true
+ *     p->belegte_plaetze <- p->belegte_plaetze + 1
+ *
+ *     stats->abgefertigte_wartende <- stats->abgefertigte_wartende + 1
+ * END WHILE
+ *
+ * END FUNCTION
  */
 
 #endif // PARKING_H
