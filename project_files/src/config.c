@@ -6,9 +6,7 @@ bool config_read_from_terminal(SimConfig* cfg)
     /*
      * FUNCTION config_read_from_terminal(cfg) RETURNS ok
      * INPUT  cfg (out)
-     * OUTPUT cfg befüllt, true wenn alle Eingaben gültig, sonst false
-     *
-     * DECLARE ok : bool
+     * OUTPUT cfg befüllt; true wenn Eingaben + Validierung ok, sonst false
      *
      * OUTPUT "Anzahl Stellplaetze: "
      * READ cfg->anzahl_stellplaetze
@@ -41,27 +39,14 @@ bool config_validate(const SimConfig* cfg)
     /*
      * FUNCTION config_validate(cfg) RETURNS ok
      * INPUT  cfg
-     * OUTPUT true wenn alle Parameter gültig, sonst false
+     * OUTPUT true wenn gültig, sonst false
      *
-     * IF cfg->anzahl_stellplaetze <= 0 THEN
-     *     RETURN false
-     * END IF
+     * IF cfg->anzahl_stellplaetze <= 0 THEN RETURN false END IF
+     * IF cfg->max_parkdauer <= 0 THEN RETURN false END IF
+     * IF cfg->sim_dauer_zeitschritte <= 0 THEN RETURN false END IF
      *
-     * IF cfg->max_parkdauer <= 0 THEN
-     *     RETURN false
-     * END IF
-     *
-     * IF cfg->sim_dauer_zeitschritte <= 0 THEN
-     *     RETURN false
-     * END IF
-     *
-     * IF cfg->ankunft_wahrscheinlichkeit_prozent < 0 THEN
-     *     RETURN false
-     * END IF
-     *
-     * IF cfg->ankunft_wahrscheinlichkeit_prozent > 100 THEN
-     *     RETURN false
-     * END IF
+     * IF cfg->ankunft_wahrscheinlichkeit_prozent < 0 THEN RETURN false END IF
+     * IF cfg->ankunft_wahrscheinlichkeit_prozent > 100 THEN RETURN false END IF
      *
      * RETURN true
      *

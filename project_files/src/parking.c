@@ -8,19 +8,16 @@ void parking_init(ParkingLot* p, size_t kapazitaet)
      * INPUT  p, kapazitaet
      * OUTPUT p initialisiert (Slots allokiert und auf frei gesetzt)
      *
-     * DECLARE i : size_t
-     *
      * p->kapazitaet <- kapazitaet
      * p->belegte_plaetze <- 0
      *
      * p->slots <- malloc(kapazitaet * sizeof(ParkingSlot))
-     *
      * IF p->slots == NULL THEN
      *     p->kapazitaet <- 0
      *     RETURN
      * END IF
      *
-     * FOR i <- 0 TO (kapazitaet - 1) DO
+     * FOR i <- 0 TO kapazitaet-1 DO
      *     p->slots[i].belegt <- false
      * END FOR
      *
@@ -51,11 +48,9 @@ int parking_find_free_slot(const ParkingLot* p)
      * INPUT  p
      * OUTPUT Index eines freien Slots oder -1 wenn keiner frei
      *
-     * DECLARE i : size_t
-     *
-     * FOR i <- 0 TO (p->kapazitaet - 1) DO
+     * FOR i <- 0 TO p->kapazitaet-1 DO
      *     IF p->slots[i].belegt == false THEN
-     *         RETURN (int)i
+     *         RETURN i
      *     END IF
      * END FOR
      *
@@ -79,9 +74,6 @@ SimStatus parking_handle_arrival(
      * INPUT  p, q, cfg, stats, current_time, next_vehicle_id
      * OUTPUT Fahrzeug wird eingeparkt oder in Warteschlange gestellt
      *
-     * DECLARE v    : Vehicle
-     * DECLARE slot : int
-     *
      * stats->neu_angekommen <- stats->neu_angekommen + 1
      *
      * v.id <- *next_vehicle_id
@@ -96,7 +88,8 @@ SimStatus parking_handle_arrival(
      * slot <- CALL parking_find_free_slot(p)
      *
      * IF slot == -1 THEN
-     *     CALL queue_push(q, v)
+     *     ok <- CALL queue_push(q, v)
+     *     IF ok == false THEN RETURN SIM_ERR_INPUT END IF
      *     RETURN SIM_KFZ_WARTEN
      * ELSE
      *     p->slots[slot].fahrzeug <- v
@@ -116,9 +109,7 @@ void parking_process_departures(ParkingLot* p, Stats* stats)
      * INPUT  p, stats
      * OUTPUT Restparkdauer reduziert, Fahrzeuge ggf. entfernt
      *
-     * DECLARE i : size_t
-     *
-     * FOR i <- 0 TO (p->kapazitaet - 1) DO
+     * FOR i <- 0 TO p->kapazitaet-1 DO
      *     IF p->slots[i].belegt == true THEN
      *
      *         p->slots[i].fahrzeug.restparkdauer <- p->slots[i].fahrzeug.restparkdauer - 1
@@ -143,22 +134,13 @@ void parking_process_queue(ParkingLot* p, Queue* q, Stats* stats, int current_ti
      * INPUT  p, q, stats, current_time
      * OUTPUT Warteschlange wird abgearbeitet, solange Plätze frei sind
      *
-     * DECLARE v : Vehicle
-     * DECLARE slot : int
-     * DECLARE ok : bool
-     * DECLARE wartezeit : int
-     *
      * WHILE CALL queue_is_empty(q) == false DO
      *
      *     slot <- CALL parking_find_free_slot(p)
-     *     IF slot == -1 THEN
-     *         BREAK
-     *     END IF
+     *     IF slot == -1 THEN BREAK END IF
      *
      *     ok <- CALL queue_pop(q, &v)
-     *     IF ok == false THEN
-     *         BREAK
-     *     END IF
+     *     IF ok == false THEN BREAK END IF
      *
      *     wartezeit <- current_time - v.einfahrtzeit
      *     stats->sum_wartezeit <- stats->sum_wartezeit + wartezeit

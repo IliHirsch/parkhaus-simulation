@@ -6,25 +6,21 @@ void stats_init(Stats* s)
     /*
      * FUNCTION stats_init(s)
      * INPUT  s
-     * OUTPUT alle Felder auf 0 gesetzt
+     * OUTPUT alle Stats-Felder auf 0 gesetzt
      *
-     * // Step-Werte
      * s->neu_angekommen <- 0
      * s->verlassen <- 0
      * s->abgefertigte_wartende <- 0
      *
-     * // Momentanwerte
      * s->belegung <- 0
      * s->warteschlangenlaenge <- 0
      *
-     * // Aggregate über alle Steps
      * s->step_count <- 0
      * s->sum_belegung <- 0
      * s->sum_warteschlange <- 0
      * s->max_warteschlange <- 0
      * s->vollauslastung_steps <- 0
      *
-     * // Samples
      * s->sum_restparkdauer <- 0
      * s->count_restparkdauer <- 0
      *
@@ -43,13 +39,11 @@ void stats_reset_step(Stats* s)
     /*
      * FUNCTION stats_reset_step(s)
      * INPUT  s
-     * OUTPUT Step-Zähler für diesen Zeitschritt zurückgesetzt
+     * OUTPUT Step-Werte auf 0 gesetzt (pro Zeitschritt)
      *
      * s->neu_angekommen <- 0
      * s->verlassen <- 0
      * s->abgefertigte_wartende <- 0
-     *
-     * // belegung & warteschlangenlaenge werden später in stats_update_step gesetzt
      *
      * END FUNCTION
      */
@@ -60,15 +54,11 @@ void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step)
     /*
      * FUNCTION stats_update_step(s, p, q, step)
      * INPUT  s, p, q, step
-     * OUTPUT Momentanwerte gesetzt + Aggregate aktualisiert
+     * OUTPUT Momentanwerte gesetzt + Aggregate fortgeschrieben
      *
-     * DECLARE i : size_t
-     *
-     * // Momentanwerte nach dem Step
      * s->belegung <- p->belegte_plaetze
      * s->warteschlangenlaenge <- CALL queue_size(q)
      *
-     * // Aggregate: Zeit fortschreiben
      * s->step_count <- s->step_count + 1
      * s->sum_belegung <- s->sum_belegung + s->belegung
      * s->sum_warteschlange <- s->sum_warteschlange + s->warteschlangenlaenge
@@ -81,7 +71,6 @@ void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step)
      *     s->vollauslastung_steps <- s->vollauslastung_steps + 1
      * END IF
      *
-     * // Restparkdauer-Samples (über alle belegten Plätze)
      * FOR i <- 0 TO (p->kapazitaet - 1) DO
      *     IF p->slots[i].belegt == true THEN
      *         s->sum_restparkdauer <- s->sum_restparkdauer + p->slots[i].fahrzeug.restparkdauer
@@ -98,9 +87,7 @@ void stats_print_step(const Stats* s, int step)
     /*
      * FUNCTION stats_print_step(s, step)
      * INPUT  s, step
-     * OUTPUT Konsolen-Ausgabe für diesen Zeitschritt (mind. 5 Werte)
-     *
-     * DECLARE avg_rest : size_t
+     * OUTPUT Konsolen-Ausgabe für diesen Step (mind. 5 Werte)
      *
      * OUTPUT "Step " step ": "
      * OUTPUT "Belegung=" s->belegung ", Queue=" s->warteschlangenlaenge
@@ -125,15 +112,8 @@ void stats_print_final(const Stats* s)
      * INPUT  s
      * OUTPUT Abschlussausgabe (Durchschnitte/Maxima)
      *
-     * DECLARE avg_belegung : size_t
-     * DECLARE avg_queue : size_t
-     * DECLARE vollauslastung_prozent : size_t
-     * DECLARE avg_warte : size_t
-     * DECLARE avg_park : size_t
-     * DECLARE avg_rest : size_t
-     *
      * OUTPUT "===== FINAL STATS ====="
- *
+     *
      * IF s->step_count == 0 THEN
      *     OUTPUT "Keine Schritte simuliert."
      *     RETURN
@@ -149,22 +129,17 @@ void stats_print_final(const Stats* s)
      * OUTPUT "Vollauslastung: " vollauslastung_prozent "% der Schritte"
      *
      * IF s->count_wartezeit > 0 THEN
-     *     avg_warte <- s->sum_wartezeit / s->count_wartezeit
-     *     OUTPUT "Ø Wartezeit (Queue->Park): " avg_warte
+     *     avg_wartezeit <- s->sum_wartezeit / s->count_wartezeit
+     *     OUTPUT "Ø Wartezeit (Queue->Park): " avg_wartezeit
      * ELSE
      *     OUTPUT "Ø Wartezeit: 0 Samples"
      * END IF
      *
      * IF s->count_parkdauer > 0 THEN
-     *     avg_park <- s->sum_parkdauer / s->count_parkdauer
-     *     OUTPUT "Ø Parkdauer: " avg_park
+     *     avg_parkdauer <- s->sum_parkdauer / s->count_parkdauer
+     *     OUTPUT "Ø Parkdauer: " avg_parkdauer
      * ELSE
      *     OUTPUT "Ø Parkdauer: 0 Samples"
-     * END IF
-     *
-     * IF s->count_restparkdauer > 0 THEN
-     *     avg_rest <- s->sum_restparkdauer / s->count_restparkdauer
-     *     OUTPUT "Ø Restparkdauer (Samples): " avg_rest
      * END IF
      *
      * END FUNCTION

@@ -1,10 +1,9 @@
 #include "simulation.h"
-
-/*
- * Option B:
- * - simulation_run() ist der Hauptablauf.
- * - simulate_step() beschreibt genau einen Zeitschritt (Pseudocode).
- */
+#include "io.h"
+#include "parking.h"
+#include "queue.h"
+#include "rng.h"
+#include "stats.h"
 
 static void simulate_step(
     ParkingLot* parking,
@@ -20,8 +19,6 @@ static void simulate_step(
      * INPUT  parking, queue, cfg, stats, step, next_vehicle_id
      * OUTPUT aktualisierte Zustände + Step-Statistiken
      *
-     * DECLARE status : SimStatus
-     *
      * // Step-Zähler zurücksetzen
      * CALL stats_reset_step(stats)
      *
@@ -32,13 +29,13 @@ static void simulate_step(
      * IF CALL rng_chance_percent(cfg->ankunft_wahrscheinlichkeit_prozent) THEN
      *     status <- CALL parking_handle_arrival(parking, queue, cfg, stats, step, next_vehicle_id)
      *
-     *     // Optional: Status auswerten (nur Dokumentation)
+     *     // Optional: Status dokumentieren
      *     IF status == SIM_KFZ_WARTEN THEN
      *         // Fahrzeug wurde in Warteschlange eingereiht
      *     ELSE IF status == SIM_OK THEN
      *         // Fahrzeug wurde direkt eingeparkt
      *     ELSE
-     *         // SIM_ERR_INPUT sollte hier nicht auftreten (cfg validiert in main)
+     *         // Fehlerfall (sollte bei validierter cfg nicht passieren)
      *     END IF
      * END IF
      *

@@ -1,12 +1,12 @@
 #include "rng.h"
-#include <stdlib.h>
+#include <stdlib.h> /* srand(), rand() */
 
 void rng_seed(unsigned int seed)
 {
     /*
      * FUNCTION rng_seed(seed)
      * INPUT  seed
-     * OUTPUT Zufallsgenerator initialisiert
+     * OUTPUT Zufallszahlengenerator initialisiert
      *
      * CALL srand(seed)
      *
@@ -19,12 +19,7 @@ int rng_int(int min_incl, int max_incl)
     /*
      * FUNCTION rng_int(min_incl, max_incl) RETURNS r
      * INPUT  min_incl, max_incl
-     * OUTPUT Ganzzahl r im Bereich [min_incl .. max_incl]
-     *
-     * DECLARE tmp   : int
-     * DECLARE range : int
-     * DECLARE raw   : int
-     * DECLARE r     : int
+     * OUTPUT r im Bereich [min_incl .. max_incl]
      *
      * IF max_incl < min_incl THEN
      *     tmp <- min_incl
@@ -48,8 +43,6 @@ bool rng_chance_percent(int percent)
      * FUNCTION rng_chance_percent(percent) RETURNS ok
      * INPUT  percent
      * OUTPUT true mit Wahrscheinlichkeit percent%, sonst false
-     *
-     * DECLARE r : int
      *
      * IF percent < 0 THEN
      *     percent <- 0

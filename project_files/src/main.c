@@ -1,6 +1,5 @@
 #include "config.h"
 #include "simulation.h"
-#include <stdio.h>
 
 int main(void)
 {
