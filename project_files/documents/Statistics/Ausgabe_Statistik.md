@@ -1,85 +1,119 @@
-# Ausgabeformat der geplanten Statistiken
+# Format der geplanten Ausgabe
 
-Dieses Dokument beschreibt **welche Kennwerte ausgegeben werden** und **wie sie aus den im Programm verwendeten Datenstrukturen entstehen**.  
-Die Formulierungen und Berechnungen sind auf den aktuellen Stand der Header/Strukturen (`types.h`, `stats.h`, `io.h`) abgestimmt.
+## 1. Allgemeines Ausgabeformat
 
----
+Die Simulation verwendet eine strukturierte **Konsolenausgabe**, die
+parallel in eine Log-Datei geschrieben wird. Das gewählte Format ist
+textbasiert, da:
 
-## 1. Laufende Statistiken pro Zeitschritt (Terminal + Log-Datei)
+-   es plattformunabhängig ist,
+-   keine zusätzlichen Bibliotheken benötigt werden,
+-   es leicht nachvollziehbar und prüfbar ist,
+-   und es exakt den internen Datenstrukturen (`Stats`, `ParkingLot`,
+    `Queue`) entspricht.
 
-Nach jedem Zeitschritt werden die wichtigsten Zustands- und Step-Zähler ausgegeben.  
-Die Werte stammen aus der `Stats`-Struktur **nach** `stats_update_step()`.
+Es werden zwei Ebenen der Ausgabe unterschieden:
 
-### Ausgegeben werden:
+1.  Laufende Statistik pro Zeitschritt\
+2.  Abschlussstatistik nach Ende der Simulation
 
-- **Zeitschritt (`step`)**  
-  Der aktuelle Zeitschritt der Simulation (Parameter der Ausgabefunktion).
+Die Werte stammen ausschließlich aus der zentralen `Stats`-Struktur.
 
-- **Belegung (`belegung`)**  
-  Anzahl der belegten Stellplätze **nach Abschluss** des Zeitschritts.  
-  Quelle: `Stats.belegung` (wird aus `ParkingLot.belegte_plaetze` übernommen).
+------------------------------------------------------------------------
 
-- **Warteschlangenlänge (`warteschlangenlaenge`)**  
-  Anzahl wartender Fahrzeuge **nach Abschluss** des Zeitschritts.  
-  Quelle: `Stats.warteschlangenlaenge` (wird über `queue_size()` ermittelt).
+## 2. Laufende Ausgabe pro Zeitschritt
 
-- **Neu (`neu_angekommen`)**  
-  Anzahl neu erzeugter Fahrzeuge im aktuellen Zeitschritt (unabhängig davon, ob direkt eingeparkt oder in die Queue gestellt).  
-  Quelle: Step-Zähler `Stats.neu_angekommen` (wird im Ankunftsmodul erhöht).
+Nach jedem Simulationsschritt wird eine kompakte Statuszeile ausgegeben.
 
-- **Verlassen (`verlassen`)**  
-  Anzahl Fahrzeuge, die im aktuellen Zeitschritt das Parkhaus verlassen haben.  
-  Quelle: Step-Zähler `Stats.verlassen` (wird im Abfahrtsmodul erhöht).
+### Struktur der Ausgabe:
 
-- **Wartende rein (`abgefertigte_wartende`)**  
-  Anzahl Fahrzeuge, die im aktuellen Zeitschritt aus der Queue in einen freien Stellplatz eingeparkt wurden.  
-  Quelle: Step-Zähler `Stats.abgefertigte_wartende` (wird beim Abarbeiten der Queue erhöht).
+    Step <n>: Belegung=<x>, Queue=<y>, Neu=<a>, Verlassen=<b>, Queue->Park=<c>, AvgRest=<d>
 
-- **Ø Restparkdauer (kumulativ)**  
-  Durchschnitt der verbleibenden Restparkdauern **über alle bisher gesammelten Samples**.  
-  Wichtig: Diese Größe ist in der aktuellen Struktur **kumulativ**, nicht „nur für den aktuellen Zeitschritt“.  
-  Quelle: `Stats.sum_restparkdauer / Stats.count_restparkdauer` (Samples werden in `stats_update_step()` gesammelt).
+### Bedeutung der Werte:
 
-### Zweck
-Die laufende Ausgabe dient dazu, den Verlauf der Simulation (Belegung, Stau vor dem Parkhaus, Abflüsse) Schritt für Schritt nachvollziehen zu können.  
-Parallel wird die gleiche Information in eine Log-Datei geschrieben, um sie später auszuwerten.
+-   **Step**: Aktueller Zeitschritt
+-   **Belegung**: Anzahl belegter Stellplätze nach dem Schritt
+-   **Queue**: Anzahl wartender Fahrzeuge
+-   **Neu**: Neu angekommene Fahrzeuge im Schritt
+-   **Verlassen**: Fahrzeuge, die das Parkhaus verlassen haben
+-   **Queue-\>Park**: Fahrzeuge, die aus der Warteschlange eingeparkt
+    wurden
+-   **AvgRest**: Durchschnittliche Restparkdauer (kumulativ über alle
+    Samples)
 
----
+Diese Darstellung erlaubt eine klare Analyse des Systemverhaltens im
+Zeitverlauf.
 
-## 2. Endstatistiken nach Abschluss der Simulation (Terminal + Log-Datei)
+------------------------------------------------------------------------
 
-Am Ende der Simulation werden aggregierte Kennzahlen ausgegeben. Alle Werte sind aus der `Stats`-Struktur berechenbar.
+## 3. Abschlussausgabe (Endstatistiken)
 
-### Ausgegeben werden:
+Nach Abschluss aller Zeitschritte werden aggregierte Kennzahlen
+ausgegeben.
 
-- **Anteil Zeitschritte mit Vollauslastung [%]**  
-  Prozentualer Anteil der Zeitschritte, in denen das Parkhaus voll war.  
-  Berechnung: `(vollauslastung_steps * 100.0) / step_count`
+### Struktur der Ausgabe:
 
-- **Durchschnittliche Belegung**  
-  Mittlere Anzahl belegter Stellplätze über alle Zeitschritte.  
-  Berechnung: `sum_belegung / step_count`
+    ===== FINAL STATS =====
+    Ø Belegung: <x>
+    Ø Warteschlange: <y>
+    Max Warteschlange: <z>
+    Vollauslastung: <p> % der Schritte
+    Ø Wartezeit (Queue->Park): <w>
+    Ø Parkdauer: <k>
+    Ø Restparkdauer (Samples): <r>
 
-- **Durchschnittliche Warteschlangenlänge**  
-  Mittlere Queue-Länge über alle Zeitschritte.  
-  Berechnung: `sum_warteschlange / step_count`
+### Berechnungsgrundlagen:
 
-- **Maximale Warteschlangenlänge**  
-  Größte gemessene Queue-Länge während der Simulation.  
-  Quelle: `max_warteschlange`
+-   Durchschnittswerte werden als Summe / Anzahl berechnet.
+-   Prozentwerte basieren auf der Anzahl Vollauslastungs-Schritte.
+-   Wartezeit berücksichtigt nur Fahrzeuge, die tatsächlich eingeparkt
+    wurden.
+-   Restparkdauer basiert auf allen während der Simulation gesammelten
+    Samples.
 
-- **Durchschnittliche Wartezeit (Queue → Park)**  
-  Mittlere Wartezeit der Fahrzeuge, die **tatsächlich** aus der Queue eingeparkt wurden.  
-  Berechnung: `sum_wartezeit / count_wartezeit` (falls `count_wartezeit > 0`)
+------------------------------------------------------------------------
 
-- **Durchschnittliche geplante Parkdauer**  
-  Mittlere (bei Ankunft gezogene) Parkdauer aller erzeugten Fahrzeuge.  
-  Berechnung: `sum_parkdauer / count_parkdauer` (falls `count_parkdauer > 0`)
+## 4. Beispielausgabe mit Testdaten
 
-- **Durchschnittliche Restparkdauer (Samples)**  
-  Mittlere Restparkdauer über alle gesammelten Samples (aus allen Zeitschritten, über alle parkenden Fahrzeuge).  
-  Berechnung: `sum_restparkdauer / count_restparkdauer` (falls `count_restparkdauer > 0`)
+### Testparameter:
 
-### Hinweis zu nicht enthaltenen Kennwerten
-Kennwerte wie **Auslastung in %**, **Belegungsänderung ΔBelegung** oder **„geschätzte zusätzliche Stellplätze“** werden in der aktuellen Struktur nicht direkt geführt bzw. lassen sich mit den aktuellen Funktionssignaturen nicht sauber ohne zusätzliche Parameter/State ausgeben.  
-Für die Abgabe werden daher nur Kennwerte aufgeführt, die mit der vorhandenen Datenhaltung konsistent berechenbar sind.
+-   Stellplätze: 5\
+-   Max. Parkdauer: 3\
+-   Simulationsdauer: 5 Schritte\
+-   Ankunftswahrscheinlichkeit: 100 %\
+-   Seed: 1
+
+### Beispiel Konsolenausgabe:
+
+    Step 0: Belegung=1, Queue=0, Neu=1, Verlassen=0, Queue->Park=0, AvgRest=3
+    Step 1: Belegung=2, Queue=0, Neu=1, Verlassen=0, Queue->Park=0, AvgRest=2
+    Step 2: Belegung=3, Queue=0, Neu=1, Verlassen=0, Queue->Park=0, AvgRest=2
+    Step 3: Belegung=3, Queue=1, Neu=1, Verlassen=1, Queue->Park=1, AvgRest=1
+    Step 4: Belegung=3, Queue=2, Neu=1, Verlassen=1, Queue->Park=1, AvgRest=1
+
+    ===== FINAL STATS =====
+    Ø Belegung: 2
+    Ø Warteschlange: 0
+    Max Warteschlange: 2
+    Vollauslastung: 0 % der Schritte
+    Ø Wartezeit (Queue->Park): 1
+    Ø Parkdauer: 2
+    Ø Restparkdauer (Samples): 2
+
+Die Zahlen dienen der Illustration des Formats und zeigen, dass sowohl
+Verlauf als auch Endzustand nachvollziehbar dokumentiert werden.
+
+------------------------------------------------------------------------
+
+## 5. Zusammenfassung
+
+Das gewählte Ausgabeformat erfüllt folgende Anforderungen:
+
+-   klare Trennung zwischen Step- und Endstatistik\
+-   vollständige Rückführbarkeit auf interne Datenstrukturen\
+-   reproduzierbare Testausgabe durch festen Seed\
+-   automatische Dokumentation in einer Log-Datei\
+-   direkte Prüfbarkeit im Terminal
+
+Damit ist der Aufgabenpunkt „Format der geplanten Ausgabe mit Testdaten"
+vollständig erfüllt.
