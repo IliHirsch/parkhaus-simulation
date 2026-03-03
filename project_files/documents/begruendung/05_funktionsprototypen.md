@@ -1,175 +1,151 @@
-# 05 – Funktionsprototypen und einheitlicher Header
+# Funktionsprototypen mit einheitlichem Header
 
-## Überblick
+## Ziel der Funktionsprototypen
 
-Für alle geplanten Funktionen werden einheitliche Funktionsprototypen in den jeweiligen Header-Dateien (`.h`) definiert.  
+Alle geplanten Funktionen der Simulation sind in den jeweiligen
+Header-Dateien (`.h`) als Funktionsprototypen deklariert.
 
-Dadurch wird:
+Ziel dieser Vorgehensweise ist:
 
-- eine klare Schnittstelle zwischen Modulen geschaffen,
-- die Kompilierung strukturiert,
-- die Lesbarkeit erhöht,
-- und die Wiederverwendbarkeit einzelner Module ermöglicht.
+-   klare Definition der Schnittstellen zwischen Modulen,
+-   frühzeitige Festlegung der Parameter und Rückgabewerte,
+-   Trennung von **Schnittstelle** und **Implementierung**,
+-   bessere Nachvollziehbarkeit für andere Entwickler und Prüfer.
 
-Alle Implementierungen befinden sich in den entsprechenden `.c`-Dateien, während die Prototypen ausschließlich in den Header-Dateien definiert sind.
+Die Header-Dateien enthalten ausschließlich die Prototypen und
+Dokumentationskommentare, während die Implementierung bzw. der
+Pseudocode in den `.c`-Dateien erfolgt.
 
----
+------------------------------------------------------------------------
 
-## Grundprinzip
+## Einheitlicher Aufbau der Funktionsheader
 
-Jede Funktion wird:
+Alle Funktionen folgen einem einheitlichen Dokumentationsschema mit:
 
-- mit eindeutigem Rückgabewert versehen
-- mit klar definierten Parametern ausgestattet
-- in einem thematisch passenden Modul deklariert
-- über Include-Guards abgesichert
+-   `@brief` → kurze Funktionsbeschreibung
+-   Beschreibung des Funktionszwecks
+-   `@param[in]`, `@param[out]`, `@param[in,out]` → klare
+    Parameterkennzeichnung
+-   `@return` → Rückgabewertbeschreibung
 
-Beispiel für einen einheitlichen Header-Aufbau:
+Beispielstruktur:
 
-```c
-#ifndef SIMULATION_H
-#define SIMULATION_H
-
-#include "types.h"
-
-void simulate_step(void);
-
-#endif
+``` c
+/**
+ * @brief Kurzbeschreibung der Funktion.
+ *
+ * Detailliertere Erklärung des Ablaufs oder Zwecks.
+ *
+ * @param[in]  param1 Beschreibung
+ * @param[out] param2 Beschreibung
+ * @return Beschreibung des Rückgabewerts
+ */
+ReturnType function_name(Type param1, Type* param2);
 ```
 
----
+------------------------------------------------------------------------
 
-## Geplante Funktionsprototypen
+## Begründung für die einheitliche Struktur
 
-### simulation.h
+### 1. Klare Schnittstellen zwischen Modulen
 
-```c
-#ifndef SIMULATION_H
-#define SIMULATION_H
+Durch die Prototypen in den Header-Dateien ist eindeutig definiert:
 
-void simulate_step(void);
+-   Welche Daten ein Modul benötigt
+-   Welche Daten es verändert
+-   Welche Werte es zurückliefert
 
-#endif
-```
+Dadurch entsteht ein klarer Datenfluss und die Module bleiben sauber
+entkoppelt.
 
-**Aufgabe:**
-- Steuert einen vollständigen Simulationsschritt
-- Koordiniert Ankunft, Abfahrt, Warteschlange und Statistik
+------------------------------------------------------------------------
 
----
+### 2. Vermeidung von Implementierungsabhängigkeiten
 
-### parking.h
+Andere Module sehen nur:
 
-```c
-#ifndef PARKING_H
-#define PARKING_H
+-   Datentypen
+-   Funktionssignaturen
 
-#include "types.h"
+Nicht jedoch:
 
-int find_free_slot(void);
-void assign_vehicle(int slot, Fahrzeug car);
-void free_slot(int slot);
-void update_parking_durations(void);
+-   interne Variablen
+-   konkrete Implementierungsdetails
+-   Speicherverwaltung im Inneren
 
-#endif
-```
+Das reduziert Kopplung und erhöht Wartbarkeit.
 
-**Aufgabe:**
-- Verwaltung der Stellplätze
-- Reduktion der Parkdauer
-- Freigabe belegter Plätze
+------------------------------------------------------------------------
 
----
+### 3. Explizite Kennzeichnung der Parameterrollen
 
-### queue.h
+Durch die Verwendung von:
 
-```c
-#ifndef QUEUE_H
-#define QUEUE_H
+-   `@param[in]`
+-   `@param[out]`
+-   `@param[in,out]`
 
-#include "types.h"
+wird klar dokumentiert:
 
-void queue_init(void);
-int queue_is_empty(void);
-void queue_enqueue(Fahrzeug car);
-Fahrzeug queue_dequeue(void);
+-   welche Parameter nur gelesen werden,
+-   welche verändert werden,
+-   welche als Ergebniscontainer dienen.
 
-#endif
-```
+Dies verhindert typische Fehler wie:
 
-**Aufgabe:**
-- Verwaltung wartender Fahrzeuge
-- FIFO-Prinzip
+-   unbeabsichtigte Veränderung von Daten,
+-   falsche Übergabe per Wert statt per Referenz,
+-   Missverständnisse über Zustandsänderungen.
 
----
+------------------------------------------------------------------------
 
-### stats.h
+### 4. Konsistenz über alle Module hinweg
 
-```c
-#ifndef STATS_H
-#define STATS_H
+Alle Module (`config`, `simulation`, `parking`, `queue`, `stats`, `io`,
+`rng`) verwenden denselben Aufbau.
 
-void stats_update(void);
-void stats_print(void);
+Beispiele:
 
-#endif
-```
+-   `bool config_validate(const SimConfig* cfg);`
+-   `SimStatus parking_handle_arrival(...);`
+-   `void stats_update_step(...);`
+-   `bool queue_push(Queue* q, Vehicle v);`
 
-**Aufgabe:**
-- Berechnung statistischer Kennzahlen
-- Ausgabe der Simulationsergebnisse
+Die Signaturen sind bewusst so gewählt, dass:
 
----
+-   Zustände über Zeiger übergeben werden,
+-   Strukturen nicht unnötig kopiert werden,
+-   Änderungen explizit sichtbar sind.
 
-### io.h
+------------------------------------------------------------------------
 
-```c
-#ifndef IO_H
-#define IO_H
+### 5. Vorbereitung auf spätere Implementierung
 
-void print_step_output(void);
-void print_final_statistics(void);
+Da Teil 1 des Projekts noch kein vollständiges lauffähiges Programm
+erfordert, dienen die Prototypen als formale Planung der Architektur.
 
-#endif
-```
+Sie ermöglichen:
 
-**Aufgabe:**
-- Formatierte Konsolenausgabe
-- Trennung von Logik und Darstellung
+-   strukturierten Programmentwurf,
+-   klare Zuordnung von Verantwortlichkeiten,
+-   direkte Umsetzung in Teil 2 ohne strukturelle Änderungen.
 
----
-
-## Einheitlicher Stil
-
-Alle Funktionsprototypen folgen einem einheitlichen Stil:
-
-- Rückgabewert steht am Anfang
-- Parameter klar benannt
-- Keine unnötigen globalen Variablen
-- Thematische Gruppierung pro Modul
-
-Rückgabewerte werden sinnvoll verwendet:
-
-- `void` bei reinen Verarbeitungsfunktionen
-- `int` oder `enum` bei Statusrückgaben
-
----
-
-## Vorteile der Prototyp-Definition
-
-1. Klare Schnittstellen zwischen Modulen  
-2. Frühzeitige Erkennung von Typfehlern  
-3. Bessere Lesbarkeit der Architektur  
-4. Trennung von Deklaration und Implementierung  
-
----
+------------------------------------------------------------------------
 
 ## Zusammenfassung
 
-Die Definition einheitlicher Funktionsprototypen in separaten Header-Dateien stellt sicher, dass:
+Die Funktionsprototypen bilden die vertraglich festgelegten
+Schnittstellen zwischen den Modulen der Simulation.
 
-- jedes Modul klar definierte Schnittstellen besitzt,
-- Abhängigkeiten kontrolliert bleiben,
-- und die Gesamtarchitektur strukturiert und wartbar bleibt.
+Durch:
 
-Damit erfüllt die Parkhaus-Simulation die Anforderungen einer modular aufgebauten Softwarearchitektur.
+-   einheitliche Dokumentation,
+-   klare Parameterkennzeichnung,
+-   saubere Trennung von Header und Implementierung,
+
+wird eine strukturierte, nachvollziehbare und wartbare Architektur
+geschaffen.
+
+Die gewählte Struktur unterstützt sowohl die Anforderungen der
+Aufgabenstellung als auch eine spätere vollständige Implementierung der
+Simulation.

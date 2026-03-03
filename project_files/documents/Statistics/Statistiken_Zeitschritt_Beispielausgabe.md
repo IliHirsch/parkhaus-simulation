@@ -1,26 +1,32 @@
-### Beispiel für Parkhaus mit noch freien Parkplätzen
+# Beispielausgabe: Statistiken pro Zeitschritt
+
+Die folgenden Beispiele zeigen das geplante Ausgabeformat pro Zeitschritt.  
+Die Zahlen sind **Beispielwerte**.
+
+---
+
+## Beispiel 1: Parkhaus mit freien Stellplätzen
 
 Zeitschritt 3
---------------------------
-Belegung:                 35 / 80
-Auslastung:               43,75 %
-Verlassen:                3
-Abgefertigte Wartende:    0
-Neu angekommen:           12
-Belegungsänderung:        +9
-Warteschlange:            0
-Ø Restparkdauer:          6,3 Zeitschritte
+----------------------------------------------------------------
+Belegung:                         35
+Warteschlangenlänge:              0
+Neu:                              12
+Verlassen:                        3
+Wartende rein (Queue → Park):     0
+Ø Restparkdauer (kumulativ):      6.3 Zeitschritte
+----------------------------------------------------------------
 
+---
 
-### Beispiel für volles Parkhaus
+## Beispiel 2: Voll ausgelastetes Parkhaus
 
 Zeitschritt 19
----------------------------------
-Belegung:                 80 / 80
-Auslastung:               100,0 %
-Verlassen:                4
-Abgefertigte Wartende:    4
-Neu angekommen:           5
-Belegungsänderung:        0
-Warteschlange:            7
-Ø Restparkdauer:          5,1 Zeitschritte
+----------------------------------------------------------------
+Belegung:                         80
+Warteschlangenlänge:              7
+Neu:                              5
+Verlassen:                        4
+Wartende rein (Queue → Park):     4
+Ø Restparkdauer (kumulativ):      5.1 Zeitschritte
+----------------------------------------------------------------

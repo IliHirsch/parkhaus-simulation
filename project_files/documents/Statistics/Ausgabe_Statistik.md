@@ -1,78 +1,85 @@
-### Geplante Statistiken
-## Zur Veranschaulichung der geplanten Auswertungen wurden Beispieldateien erstellt, die das vorgesehene Ausgabeformat demonstrieren.
+# Ausgabeformat der geplanten Statistiken
 
-## Laufende Statistiken (pro Zeitschritt):
-Nach jedem Zeitschritt werden im Terminal die aktuellen Simulationsdaten ausgegeben. Diese umfassen:
+Dieses Dokument beschreibt **welche Kennwerte ausgegeben werden** und **wie sie aus den im Programm verwendeten Datenstrukturen entstehen**.  
+Die Formulierungen und Berechnungen sind auf den aktuellen Stand der Header/Strukturen (`types.h`, `stats.h`, `io.h`) abgestimmt.
 
-    -Zeit: aktueller Zeitschritt der Simulation.
+---
 
-    -Belegung: Anzahl der aktuell belegten Stellplätze.
+## 1. Laufende Statistiken pro Zeitschritt (Terminal + Log-Datei)
 
-    -Auslastung: prozentualer Anteil belegter Stellplätze bezogen auf die Gesamtkapazität.
+Nach jedem Zeitschritt werden die wichtigsten Zustands- und Step-Zähler ausgegeben.  
+Die Werte stammen aus der `Stats`-Struktur **nach** `stats_update_step()`.
 
-    -Neu: Anzahl neu angekommener Fahrzeuge im aktuellen Zeitschritt.
+### Ausgegeben werden:
 
-    -Verlassen: Anzahl der Fahrzeuge, die das Parkhaus im aktuellen Zeitschritt verlassen haben.
+- **Zeitschritt (`step`)**  
+  Der aktuelle Zeitschritt der Simulation (Parameter der Ausgabefunktion).
 
-    -Wartende rein: Anzahl der Fahrzeuge, die aus der Warteschlange einen freien Stellplatz erhalten haben.
+- **Belegung (`belegung`)**  
+  Anzahl der belegten Stellplätze **nach Abschluss** des Zeitschritts.  
+  Quelle: `Stats.belegung` (wird aus `ParkingLot.belegte_plaetze` übernommen).
 
-    -Belegungsänderung: Differenz der Belegung zum vorherigen Zeitschritt (Belegung(t) − Belegung(t−1)); positiver Wert zeigt eine Aufbauphase, 0 eine Sättigungsphase  und ein negativer Wert eine Entlastungsphase.
+- **Warteschlangenlänge (`warteschlangenlaenge`)**  
+  Anzahl wartender Fahrzeuge **nach Abschluss** des Zeitschritts.  
+  Quelle: `Stats.warteschlangenlaenge` (wird über `queue_size()` ermittelt).
 
-    -Warteschlange: Anzahl der aktuell vor dem Parkhaus wartenden Fahrzeuge.
+- **Neu (`neu_angekommen`)**  
+  Anzahl neu erzeugter Fahrzeuge im aktuellen Zeitschritt (unabhängig davon, ob direkt eingeparkt oder in die Queue gestellt).  
+  Quelle: Step-Zähler `Stats.neu_angekommen` (wird im Ankunftsmodul erhöht).
 
-    -Ø Restparkdauer: Durchschnitt der verbleibenden Parkdauer aller parkenden Fahrzeuge; dient als Indikator für die erwartbare zeitliche Entwicklung der Belegung.
+- **Verlassen (`verlassen`)**  
+  Anzahl Fahrzeuge, die im aktuellen Zeitschritt das Parkhaus verlassen haben.  
+  Quelle: Step-Zähler `Stats.verlassen` (wird im Abfahrtsmodul erhöht).
 
+- **Wartende rein (`abgefertigte_wartende`)**  
+  Anzahl Fahrzeuge, die im aktuellen Zeitschritt aus der Queue in einen freien Stellplatz eingeparkt wurden.  
+  Quelle: Step-Zähler `Stats.abgefertigte_wartende` (wird beim Abarbeiten der Queue erhöht).
 
-Diese Informationen dienen der unmittelbaren Beobachtung des Verkehrsflusses sowie der Entwicklung von Belegung und Warteschlange.
-Parallel dazu werden dieselben Daten strukturiert in einer Textdatei tabellarisch gespeichert, um eine bessere Übersicht und spätere Analyse zu ermöglichen.
+- **Ø Restparkdauer (kumulativ)**  
+  Durchschnitt der verbleibenden Restparkdauern **über alle bisher gesammelten Samples**.  
+  Wichtig: Diese Größe ist in der aktuellen Struktur **kumulativ**, nicht „nur für den aktuellen Zeitschritt“.  
+  Quelle: `Stats.sum_restparkdauer / Stats.count_restparkdauer` (Samples werden in `stats_update_step()` gesammelt).
 
-## Endstatistiken (nach Abschluss der Simulation)
-Nach Beendigung der Simulation werden zusammenfassende Kennzahlen sowohl im Terminal als auch in der Textdatei ausgegeben.
-Folgende Kennwerte werden berechnet:
+### Zweck
+Die laufende Ausgabe dient dazu, den Verlauf der Simulation (Belegung, Stau vor dem Parkhaus, Abflüsse) Schritt für Schritt nachvollziehen zu können.  
+Parallel wird die gleiche Information in eine Log-Datei geschrieben, um sie später auszuwerten.
 
-    -Anteil Zeitschritte mit Vollauslastung: Prozentualer Anteil der Zeitschritte, in denen alle Stellplätze belegt waren.
+---
 
-    -Durchschnittliche Belegung: Mittlere Anzahl belegter Stellplätze über die gesamte Simulation im Verhältnis zur Gesamtkapazität.
+## 2. Endstatistiken nach Abschluss der Simulation (Terminal + Log-Datei)
 
-    -Durchschnittliche Auslastung: Durchschnittliche prozentuale Auslastung des Parkhauses.
+Am Ende der Simulation werden aggregierte Kennzahlen ausgegeben. Alle Werte sind aus der `Stats`-Struktur berechenbar.
 
-    -Maximale Warteschlangenlänge: Höchste Anzahl gleichzeitig wartender Fahrzeuge.
+### Ausgegeben werden:
 
-    -Durchschnittliche Warteschlangenlänge: Mittlere Anzahl wartender Fahrzeuge über alle Zeitschritte.
+- **Anteil Zeitschritte mit Vollauslastung [%]**  
+  Prozentualer Anteil der Zeitschritte, in denen das Parkhaus voll war.  
+  Berechnung: `(vollauslastung_steps * 100.0) / step_count`
 
-    -Durchschnittliche Restparkdauer: Mittlere verbleibende Parkdauer aller parkenden Fahrzeuge.
+- **Durchschnittliche Belegung**  
+  Mittlere Anzahl belegter Stellplätze über alle Zeitschritte.  
+  Berechnung: `sum_belegung / step_count`
 
-    -Geschätzte zusätzliche Stellplätze: Abschätzung der zusätzlich benötigten Kapazität zur Reduzierung von Warteschlangen.
+- **Durchschnittliche Warteschlangenlänge**  
+  Mittlere Queue-Länge über alle Zeitschritte.  
+  Berechnung: `sum_warteschlange / step_count`
 
-Diese Endstatistiken ermöglichen eine Bewertung der Kapazitätsauslastung, der Verkehrsbelastung sowie möglicher Engpässe des Parkhauses.
+- **Maximale Warteschlangenlänge**  
+  Größte gemessene Queue-Länge während der Simulation.  
+  Quelle: `max_warteschlange`
 
+- **Durchschnittliche Wartezeit (Queue → Park)**  
+  Mittlere Wartezeit der Fahrzeuge, die **tatsächlich** aus der Queue eingeparkt wurden.  
+  Berechnung: `sum_wartezeit / count_wartezeit` (falls `count_wartezeit > 0`)
 
-## Beispiel 
-    Simulation Parkhaus Rauenegg
---------------------------------------------------------------------------------------------------------------------------
-    Zeit | Belegung | Auslastung | Neu | Verlassen | Wartende rein | Belegungsänderung | Warteschlange | durch. Restparkdauer
-    --------------------------------------------------------------------------------------------------------------------------
-      0 |        0 |      0.00% |   0 |         0 |             0 |                0  |             0 |             0.0
-      1 |        3 |     30.00% |   3 |         0 |             0 |               +3  |             0 |             6.0
-      2 |        5 |     50.00% |   2 |         0 |             0 |               +2  |             0 |             6.5
-      3 |        7 |     70.00% |   2 |         0 |             0 |               +2  |             0 |             7.0
-      4 |        9 |     90.00% |   2 |         0 |             0 |               +2  |             1 |             7.2
-      5 |       10 |    100.00% |   3 |         2 |             2 |               +1  |             3 |             5.8
-      6 |       10 |    100.00% |   1 |         1 |             1 |                0  |             3 |             5.0
-      7 |        9 |     90.00% |   1 |         2 |             0 |               -1  |             2 |             4.2
-      8 |        8 |     80.00% |   1 |         2 |             0 |               -1  |             1 |             3.5
-      9 |        6 |     60.00% |   0 |         2 |             0 |               -2  |             0 |             2.8
-     ...|      ... |        ... | ... |       ... |           ... |              ...  |           ... |             ...
-    --------------------------------------------------------------------------------------------------------------------------
+- **Durchschnittliche geplante Parkdauer**  
+  Mittlere (bei Ankunft gezogene) Parkdauer aller erzeugten Fahrzeuge.  
+  Berechnung: `sum_parkdauer / count_parkdauer` (falls `count_parkdauer > 0`)
 
-    
-    Endstatistik
-    -------------------------------------------------------------------
-    Anteil Zeitschritte mit Vollauslastung:         20.0 %
-    Durchschnittliche Belegung:                     6.7 / 10
-    Durchschnittliche Auslastung:                   67.0 %
-    Maximale Warteschlangenlaenge:                  3 Fahrzeuge
-    Durchschnittliche Warteschlangenlaenge:         1.0 Fahrzeuge
-    Durchschnittliche Restparkdauer:                4.8 Zeitschritte
-    Geschaetzte zusaetzliche Stellplaetze:          3
-    -------------------------------------------------------------------
+- **Durchschnittliche Restparkdauer (Samples)**  
+  Mittlere Restparkdauer über alle gesammelten Samples (aus allen Zeitschritten, über alle parkenden Fahrzeuge).  
+  Berechnung: `sum_restparkdauer / count_restparkdauer` (falls `count_restparkdauer > 0`)
+
+### Hinweis zu nicht enthaltenen Kennwerten
+Kennwerte wie **Auslastung in %**, **Belegungsänderung ΔBelegung** oder **„geschätzte zusätzliche Stellplätze“** werden in der aktuellen Struktur nicht direkt geführt bzw. lassen sich mit den aktuellen Funktionssignaturen nicht sauber ohne zusätzliche Parameter/State ausgeben.  
+Für die Abgabe werden daher nur Kennwerte aufgeführt, die mit der vorhandenen Datenhaltung konsistent berechenbar sind.

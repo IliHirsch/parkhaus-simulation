@@ -1,149 +1,238 @@
-# 04 – Datentypen und Strukturen
+# Übersicht zu den festgelegten Datentypen und Strukturen
 
-## Überblick
+## Ziel der Typdefinitionen
 
-Für die Umsetzung der Parkhaus-Simulation wurden eigene Datentypen und Strukturen definiert, um den Simulationszustand strukturiert und nachvollziehbar abzubilden.
+Alle zentralen Datentypen der Simulation sind in der Datei `types.h`
+gebündelt. Dadurch:
 
-Die Verwendung eigener `struct`-Typen und `enum`-Definitionen erhöht die Lesbarkeit des Codes, reduziert Fehlerquellen und sorgt für eine klare Modellierung der realen Problemstellung.
+-   existiert **eine einheitliche, zentrale Definition** aller
+    Strukturen,
+-   werden **Mehrfachdefinitionen und Inkonsistenzen vermieden**,
+-   bleiben die einzelnen Module logisch getrennt,
+-   können sich die Module über klar definierte Datentypen austauschen.
 
----
+Die Strukturierung folgt dem Prinzip:\
+**Datenmodelle werden getrennt von der Logik definiert.**
 
-## Zentrale Struktur: Fahrzeug
+------------------------------------------------------------------------
 
-Zur Modellierung eines einzelnen Fahrzeugs wird eine eigene Struktur verwendet:
+## Überblick über die verwendeten Datentypen
 
-```c
-typedef struct {
-    int id;
-    int parkdauer;
-    int einfahrtszeit;
-} Fahrzeug;
-```
+### 1. `SimStatus` (enum)
 
-### Begründung
-
-- **id**  
-  Eindeutige Identifikation des Fahrzeugs innerhalb der Simulation.
-
-- **parkdauer**  
-  Speichert die verbleibende Parkdauer in Zeitschritten.  
-  Wird in jedem Simulationsschritt reduziert.
-
-- **einfahrtszeit**  
-  Ermöglicht die spätere Berechnung von Wartezeit oder Aufenthaltsdauer.
-
-Die Bündelung dieser Werte in einer Struktur verhindert lose Variablen und sorgt für eine klare Zusammengehörigkeit der Fahrzeugdaten.
-
----
-
-## Struktur zur Parkplatzverwaltung
-
-Die Stellplätze werden als Array verwaltet:
-
-```c
-Fahrzeug parkplaetze[MAX_STELLPLAETZE];
-```
-
-Zusätzlich wird über eine Belegungsinformation gesteuert, ob ein Platz aktuell belegt ist.
-
-### Begründung
-
-- Direkter Zugriff über Index
-- Effiziente Iteration bei Abfahrtsprüfung
-- Konstante Speichergröße
-- Einfache Implementierung ohne dynamische Speicherverwaltung
-
-Da die Anzahl der Stellplätze konstant ist, ist eine statische Array-Struktur ausreichend und effizient.
-
----
-
-## Warteschlange (Queue)
-
-Für wartende Fahrzeuge wird eine eigene Datenstruktur verwendet:
-
-```c
-typedef struct {
-    Fahrzeug daten[MAX_QUEUE];
-    int front;
-    int rear;
-} Queue;
-```
-
-### Begründung
-
-- FIFO-Prinzip (First-In-First-Out)
-- Trennung zwischen Parkplatzverwaltung und Wartelogik
-- Klare Zuständigkeit im `queue`-Modul
-
-Die Queue ist notwendig, da bei fehlenden Stellplätzen Fahrzeuge nicht verworfen, sondern zwischengespeichert werden.
-
----
-
-## Statuscodes (Enum)
-
-Zur einheitlichen Rückmeldung von Funktionen werden Statuscodes verwendet:
-
-```c
+``` c
 typedef enum {
-    SIM_OK,
-    SIM_QUEUE,
-    SIM_ERROR
+    SIM_OK = 0,
+    SIM_KFZ_WARTEN,
+    SIM_ERR_INPUT
 } SimStatus;
 ```
 
-### Begründung
+**Begründung:**
 
-- Vermeidung von „magischen Zahlen“
-- Bessere Lesbarkeit
-- Klare Unterscheidung von Erfolgs- und Sonderfällen
+-   Vermeidet „magische Zahlen" als Rückgabewerte.
+-   Erhöht Lesbarkeit und Wartbarkeit.
+-   Ermöglicht saubere Statusrückgaben bei Funktionen wie
+    `parking_handle_arrival()`.
 
-Enums erhöhen die Typensicherheit und machen Rückgabewerte eindeutig interpretierbar.
+------------------------------------------------------------------------
 
----
+### 2. `Vehicle`
 
-## Konfigurationskonstanten
-
-Globale Konstanten werden zentral in `config.h` definiert:
-
-```c
-#define MAX_STELLPLAETZE 50
-#define MAX_QUEUE 100
-#define SIM_DAUER 1000
+``` c
+typedef struct {
+    unsigned int id;
+    int restparkdauer;
+    int einfahrtzeit;
+} Vehicle;
 ```
 
-### Begründung
+**Begründung:**
 
-- Vermeidung harter Kodierung im Programm
-- Einfache Anpassbarkeit der Simulation
-- Zentrale Verwaltung aller Parameter
+Ein Fahrzeug ist die zentrale Entität der Simulation.
 
----
+-   `id` → eindeutige Identifikation
+-   `restparkdauer` → wird pro Zeitschritt reduziert
+-   `einfahrtzeit` → notwendig zur Berechnung der Wartezeit
 
-## Wahl der Datentypen
+Die Struktur ist bewusst kompakt gehalten und enthält nur
+simulationsrelevante Informationen.
 
-Es werden überwiegend folgende Grundtypen verwendet:
+------------------------------------------------------------------------
 
-- `int` für Zähler, Zeitangaben und Indizes
-- `enum` für Statuswerte
-- `struct` zur Modellierung komplexer Einheiten
+### 3. `ParkingSlot`
 
-Auf dynamische Speicherverwaltung (`malloc`) wird bewusst verzichtet, da:
+``` c
+typedef struct {
+    bool belegt;
+    Vehicle fahrzeug;
+} ParkingSlot;
+```
 
-- maximale Größen bekannt sind
-- Speicherbedarf gering ist
-- Fehlerquellen reduziert werden
+**Begründung:**
 
----
+Ein Stellplatz kapselt:
+
+-   Belegungszustand (`belegt`)
+-   Das zugehörige Fahrzeug
+
+Diese Struktur trennt klar: - Parkhaus (Sammlung von Slots) -
+Fahrzeugdaten
+
+------------------------------------------------------------------------
+
+### 4. `ParkingLot`
+
+``` c
+typedef struct {
+    ParkingSlot* slots;
+    size_t kapazitaet;
+    size_t belegte_plaetze;
+} ParkingLot;
+```
+
+**Begründung:**
+
+Das Parkhaus wird als **dynamisch allokiertes Array von Stellplätzen**
+umgesetzt.
+
+-   `slots` → dynamischer Speicher (`malloc`)
+-   `kapazitaet` → feste Anzahl Stellplätze
+-   `belegte_plaetze` → schneller Zugriff auf aktuelle Belegung
+
+Vorteile dieser Struktur:
+
+-   O(1) Zugriff auf Belegungsgrad
+-   einfache Iteration über Slots
+-   klare Trennung von Struktur und Logik
+
+------------------------------------------------------------------------
+
+### 5. `QueueNode`
+
+``` c
+typedef struct QueueNode {
+    Vehicle fahrzeug;
+    struct QueueNode* next;
+} QueueNode;
+```
+
+**Begründung:**
+
+Für die Warteschlange wird eine **einfach verkettete Liste** verwendet.
+
+-   Jeder Knoten enthält genau ein Fahrzeug.
+-   `next` zeigt auf das nächste Element.
+
+Dies ermöglicht:
+
+-   dynamisches Wachstum der Warteschlange
+-   FIFO-Verhalten ohne Verschieben von Array-Inhalten
+-   saubere Speicherverwaltung (`malloc` / `free`)
+
+------------------------------------------------------------------------
+
+### 6. `Queue`
+
+``` c
+typedef struct {
+    QueueNode* head;
+    QueueNode* tail;
+    size_t size;
+} Queue;
+```
+
+**Begründung:**
+
+Die Queue kapselt:
+
+-   `head` → erstes Element
+-   `tail` → letztes Element
+-   `size` → aktuelle Länge
+
+Vorteile:
+
+-   `push` und `pop` in O(1)
+-   einfache Leerprüfung
+-   keine Traversierung zur Längenbestimmung nötig
+
+------------------------------------------------------------------------
+
+### 7. `Stats`
+
+Die `Stats`-Struktur enthält:
+
+-   **Step-Zähler**
+-   **Momentanwerte**
+-   **Aggregierte Werte**
+-   **Samples für Mittelwerte**
+
+**Begründung:**
+
+Alle statistischen Werte werden zentral gesammelt, um:
+
+-   Berechnungen konsistent zu halten
+-   doppelte Logik zu vermeiden
+-   eine klare Trennung zwischen Simulation und Statistik zu
+    gewährleisten
+
+Step-Werte werden pro Zeitschritt zurückgesetzt, Aggregate über die
+gesamte Simulation fortgeschrieben.
+
+------------------------------------------------------------------------
+
+## Designentscheidungen
+
+### Verwendung von `struct` statt globaler Variablen
+
+Alle Zustände (Parkhaus, Queue, Stats, Config) werden explizit
+übergeben.
+
+Vorteile:
+
+-   bessere Testbarkeit
+-   keine versteckten Seiteneffekte
+-   klarer Datenfluss
+
+------------------------------------------------------------------------
+
+### Dynamische Speicherverwaltung
+
+-   `ParkingLot` → dynamisches Array
+-   `Queue` → dynamische Knoten
+
+Begründung:
+
+-   Kapazität ist zur Laufzeit bekannt
+-   Warteschlange kann dynamisch wachsen
+-   entspricht Anforderungen an dynamische Speicherverwaltung
+
+------------------------------------------------------------------------
+
+### Trennung von Daten und Verhalten
+
+-   `types.h` enthält ausschließlich Datendefinitionen
+-   Keine Logik
+-   Keine Funktionsimplementierungen
+
+Dies verhindert zyklische Abhängigkeiten und Vermischung von Struktur
+und Algorithmus.
+
+------------------------------------------------------------------------
 
 ## Zusammenfassung
 
-Die gewählten Datentypen und Strukturen bilden die reale Problemstellung der Parkhaus-Simulation strukturiert ab.
+Die festgelegten Datentypen modellieren:
 
-Durch die Verwendung eigener `struct`- und `enum`-Typen wird:
+-   Fahrzeuge als Entitäten
+-   Stellplätze als Zustandscontainer
+-   das Parkhaus als dynamische Struktur
+-   die Warteschlange als FIFO-Datenstruktur
+-   Statistiken als aggregierte Auswertungseinheit
 
-- die Lesbarkeit erhöht,
-- die Wartbarkeit verbessert,
-- die Fehleranfälligkeit reduziert,
-- und eine klare Trennung der Zuständigkeiten erreicht.
+Die gewählte Struktur sorgt für:
 
-Die Datenstruktur ist damit stabil, nachvollziehbar und für die geplante Simulation ausreichend dimensioniert.
+-   klare Verantwortlichkeiten
+-   gute Erweiterbarkeit
+-   saubere Speicherverwaltung
+-   nachvollziehbare Datenflüsse zwischen den Modulen
