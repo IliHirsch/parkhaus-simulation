@@ -1,65 +1,65 @@
 #include "parking.h"
 #include <stdlib.h>
 
+/**
+ * Initialisiert das Parkhaus.
+ */
 void parking_init(ParkingLot* p, size_t kapazitaet)
 {
-    /*
-     * FUNCTION parking_init(p, kapazitaet)
-     * INPUT  p, kapazitaet
-     * OUTPUT p initialisiert (Slots allokiert und auf frei gesetzt)
-     *
-     * p->kapazitaet <- kapazitaet
-     * p->belegte_plaetze <- 0
-     *
-     * p->slots <- malloc(kapazitaet * sizeof(ParkingSlot))
-     * IF p->slots == NULL THEN
-     *     p->kapazitaet <- 0
-     *     RETURN
-     * END IF
-     *
-     * FOR i <- 0 TO kapazitaet-1 DO
-     *     p->slots[i].belegt <- false
-     * END FOR
-     *
-     * END FUNCTION
-     */
+    if (p == NULL) {
+        return;
+    }
+
+    p->kapazitaet = kapazitaet;
+    p->belegte_plaetze = 0;
+
+    p->slots = malloc(kapazitaet * sizeof(ParkingSlot));
+    if (p->slots == NULL) {
+        p->kapazitaet = 0;
+        return;
+    }
+
+    for (size_t i = 0; i < kapazitaet; i++) {
+        p->slots[i].belegt = false;
+    }
 }
 
+/**
+ * Gibt Speicher des Parkhauses frei.
+ */
 void parking_free(ParkingLot* p)
 {
-    /*
-     * FUNCTION parking_free(p)
-     * INPUT  p
-     * OUTPUT Speicher freigegeben, p zurückgesetzt
-     *
-     * free(p->slots)
-     * p->slots <- NULL
-     * p->kapazitaet <- 0
-     * p->belegte_plaetze <- 0
-     *
-     * END FUNCTION
-     */
+    if (p == NULL) {
+        return;
+    }
+
+    free(p->slots);
+    p->slots = NULL;
+    p->kapazitaet = 0;
+    p->belegte_plaetze = 0;
 }
 
+/**
+ * Sucht freien Parkplatz.
+ */
 int parking_find_free_slot(const ParkingLot* p)
 {
-    /*
-     * FUNCTION parking_find_free_slot(p) RETURNS index
-     * INPUT  p
-     * OUTPUT Index eines freien Slots oder -1 wenn keiner frei
-     *
-     * FOR i <- 0 TO p->kapazitaet-1 DO
-     *     IF p->slots[i].belegt == false THEN
-     *         RETURN i
-     *     END IF
-     * END FOR
-     *
-     * RETURN -1
-     *
-     * END FUNCTION
-     */
+    if (p == NULL || p->slots == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < p->kapazitaet; i++) {
+        if (!p->slots[i].belegt) {
+            return (int)i;
+        }
+    }
+
+    return -1;
 }
 
+/**
+ * Verarbeitet Fahrzeugankunft.
+ */
 SimStatus parking_handle_arrival(
     ParkingLot* p,
     Queue* q,
@@ -69,91 +69,100 @@ SimStatus parking_handle_arrival(
     unsigned int* next_vehicle_id
 )
 {
-    /*
-     * FUNCTION parking_handle_arrival(p, q, cfg, stats, current_time, next_vehicle_id) RETURNS status
-     * INPUT  p, q, cfg, stats, current_time, next_vehicle_id
-     * OUTPUT Fahrzeug wird eingeparkt oder in Warteschlange gestellt
-     *
-     * stats->neu_angekommen <- stats->neu_angekommen + 1
-     *
-     * v.id <- *next_vehicle_id
-     * *next_vehicle_id <- *next_vehicle_id + 1
-     *
-     * v.restparkdauer <- CALL rng_int(1, cfg->max_parkdauer)
-     * v.einfahrtzeit <- current_time
-     *
-     * stats->sum_parkdauer <- stats->sum_parkdauer + v.restparkdauer
-     * stats->count_parkdauer <- stats->count_parkdauer + 1
-     *
-     * slot <- CALL parking_find_free_slot(p)
-     *
-     * IF slot == -1 THEN
-     *     ok <- CALL queue_push(q, v)
-     *     IF ok == false THEN RETURN SIM_ERR_INPUT END IF
-     *     RETURN SIM_KFZ_WARTEN
-     * ELSE
-     *     p->slots[slot].fahrzeug <- v
-     *     p->slots[slot].belegt <- true
-     *     p->belegte_plaetze <- p->belegte_plaetze + 1
-     *     RETURN SIM_OK
-     * END IF
-     *
-     * END FUNCTION
-     */
+    if (p == NULL || q == NULL || cfg == NULL || stats == NULL || next_vehicle_id == NULL) {
+        return SIM_ERR_INPUT;
+    }
+
+    stats->neu_angekommen++;
+
+    Vehicle v;
+
+    v.id = *next_vehicle_id;
+    (*next_vehicle_id)++;
+
+    v.restparkdauer = rng_int(1, cfg->max_parkdauer);
+    v.einfahrtzeit = current_time;
+
+    stats->sum_parkdauer += v.restparkdauer;
+    stats->count_parkdauer++;
+
+    int slot = parking_find_free_slot(p);
+
+    if (slot == -1) {
+
+        bool ok = queue_push(q, v);
+        if (!ok) {
+            return SIM_ERR_INPUT;
+        }
+
+        return SIM_KFZ_WARTEN;
+    }
+
+    p->slots[slot].fahrzeug = v;
+    p->slots[slot].belegt = true;
+    p->belegte_plaetze++;
+
+    return SIM_OK;
 }
 
+/**
+ * Bearbeitet Abfahrten.
+ */
 void parking_process_departures(ParkingLot* p, Stats* stats)
 {
-    /*
-     * FUNCTION parking_process_departures(p, stats)
-     * INPUT  p, stats
-     * OUTPUT Restparkdauer reduziert, Fahrzeuge ggf. entfernt
-     *
-     * FOR i <- 0 TO p->kapazitaet-1 DO
-     *     IF p->slots[i].belegt == true THEN
-     *
-     *         p->slots[i].fahrzeug.restparkdauer <- p->slots[i].fahrzeug.restparkdauer - 1
-     *
-     *         IF p->slots[i].fahrzeug.restparkdauer <= 0 THEN
-     *             p->slots[i].belegt <- false
-     *             p->belegte_plaetze <- p->belegte_plaetze - 1
-     *             stats->verlassen <- stats->verlassen + 1
-     *         END IF
-     *
-     *     END IF
-     * END FOR
-     *
-     * END FUNCTION
-     */
+    if (p == NULL || stats == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < p->kapazitaet; i++) {
+
+        if (p->slots[i].belegt) {
+
+            p->slots[i].fahrzeug.restparkdauer--;
+
+            if (p->slots[i].fahrzeug.restparkdauer <= 0) {
+
+                p->slots[i].belegt = false;
+                p->belegte_plaetze--;
+
+                stats->verlassen++;
+            }
+        }
+    }
 }
 
+/**
+ * Arbeitet Warteschlange ab.
+ */
 void parking_process_queue(ParkingLot* p, Queue* q, Stats* stats, int current_time)
 {
-    /*
-     * FUNCTION parking_process_queue(p, q, stats, current_time)
-     * INPUT  p, q, stats, current_time
-     * OUTPUT Warteschlange wird abgearbeitet, solange Plätze frei sind
-     *
-     * WHILE CALL queue_is_empty(q) == false DO
-     *
-     *     slot <- CALL parking_find_free_slot(p)
-     *     IF slot == -1 THEN BREAK END IF
-     *
-     *     ok <- CALL queue_pop(q, &v)
-     *     IF ok == false THEN BREAK END IF
-     *
-     *     wartezeit <- current_time - v.einfahrtzeit
-     *     stats->sum_wartezeit <- stats->sum_wartezeit + wartezeit
-     *     stats->count_wartezeit <- stats->count_wartezeit + 1
-     *
-     *     p->slots[slot].fahrzeug <- v
-     *     p->slots[slot].belegt <- true
-     *     p->belegte_plaetze <- p->belegte_plaetze + 1
-     *
-     *     stats->abgefertigte_wartende <- stats->abgefertigte_wartende + 1
-     *
-     * END WHILE
-     *
-     * END FUNCTION
-     */
+    if (p == NULL || q == NULL || stats == NULL) {
+        return;
+    }
+
+    while (!queue_is_empty(q)) {
+
+        int slot = parking_find_free_slot(p);
+        if (slot == -1) {
+            break;
+        }
+
+        Vehicle v;
+
+        bool ok = queue_pop(q, &v);
+        if (!ok) {
+            break;
+        }
+
+        int wartezeit = current_time - v.einfahrtzeit;
+
+        stats->sum_wartezeit += wartezeit;
+        stats->count_wartezeit++;
+
+        p->slots[slot].fahrzeug = v;
+        p->slots[slot].belegt = true;
+        p->belegte_plaetze++;
+
+        stats->abgefertigte_wartende++;
+    }
 }
