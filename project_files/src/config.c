@@ -3,35 +3,48 @@
 
 bool config_read_from_terminal(SimConfig* cfg)
 {
-    /*
-     * FUNCTION config_read_from_terminal(cfg) RETURNS ok
-     * INPUT  cfg (out)
-     * OUTPUT cfg befüllt; true wenn Eingaben + Validierung ok, sonst false
-     *
-     * OUTPUT "Anzahl Stellplaetze: "
-     * READ cfg->anzahl_stellplaetze
-     *
-     * OUTPUT "Max. Parkdauer (in Zeitschritten): "
-     * READ cfg->max_parkdauer
-     *
-     * OUTPUT "Simulationsdauer (Anzahl Zeitschritte): "
-     * READ cfg->sim_dauer_zeitschritte
-     *
-     * OUTPUT "Ankunftswahrscheinlichkeit pro Zeitschritt (0..100): "
-     * READ cfg->ankunft_wahrscheinlichkeit_prozent
-     *
-     * OUTPUT "Seed (Zufallszahlengenerator): "
-     * READ cfg->seed
-     *
-     * ok <- CALL config_validate(cfg)
-     * IF ok == false THEN
-     *     RETURN false
-     * END IF
-     *
-     * RETURN true
-     *
-     * END FUNCTION
-     */
+
+    if (cfg == NULL)
+    {
+        return false;
+    }
+
+    printf("Anzahl Stellplaetze: ");
+    if (scanf("%zu", &cfg->anzahl_stellplaetze) != 1)
+    {
+        return false;
+    }
+
+    printf("Max. Parkdauer (in Zeitschritten): ");
+    if (scanf("%d", &cfg->max_parkdauer) != 1)
+    {
+        return false;
+    }
+
+    printf("Simulationsdauer (Anzahl Zeitschritte): ");
+    if (scanf("%d", &cfg->sim_dauer_zeitschritte) != 1)
+    {
+        return false;
+    }
+
+    printf("Ankunftswahrscheinlichkeit pro Zeitschritt (0..100): ");
+    if (scanf("%d", &cfg->ankunft_wahrscheinlichkeit_prozent) != 1)
+    {
+        return false;
+    }
+
+    printf("Seed (Zufallszahlengenerator): ");
+    if (scanf("%u", &cfg->seed) != 1)
+    {
+        return false;
+    }
+
+    if (!config_validate(cfg))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool config_validate(const SimConfig* cfg)
