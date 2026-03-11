@@ -144,7 +144,7 @@ void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue*
     }
 }
 
-void stats_print_step(const Stats* s, int step)
+void stats_print_step(const Stats* p_stats, int step)
 {
     /*
      * FUNCTION stats_print_step(s, step)
@@ -165,6 +165,27 @@ void stats_print_step(const Stats* s, int step)
      *
      * END FUNCTION
      */
+
+    if (p_stats == NULL){
+        return;
+    }
+
+    printf("Step %d: ", step);
+
+    printf("Belegung=%zu, ", p_stats->belegung);
+    printf("Queue=%zu, ", p_stats->warteschlangenlaenge);
+
+    printf("Neu=%zu, ", p_stats->neu_angekommen);
+    printf("Verlassen=%zu, ", p_stats->verlassen);
+
+    printf("Queue->Park=%zu", p_stats->abgefertigte_wartende);
+
+    if (p_stats->count_restparkdauer > 0){
+        float avg_rest = (float)p_stats->sum_restparkdauer / (float)p_stats->count_restparkdauer;
+        printf(", AvgRest=%.2f", avg_rest);
+    }
+
+    printf("\n");
 }
 
 void stats_print_final(const Stats* s)

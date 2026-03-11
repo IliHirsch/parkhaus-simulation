@@ -41,7 +41,7 @@ void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue*
  * @param[in] s Stats-Struktur (nach stats_update_step).
  * @param[in] step Aktueller Zeitschritt.
  */
-void stats_print_step(const Stats* s, int step);
+void stats_print_step(const Stats* p_stats, int step);
 
 /**
  * @brief Gibt die Abschlussstatistiken der Simulation aus.
