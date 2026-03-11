@@ -60,7 +60,7 @@ void stats_init(Stats* p_stats)
     p_stats->count_parkdauer = 0;
 }
 
-void stats_reset_step(Stats* s)
+void stats_reset_step(Stats* p_stats)
 {
     /*
      * FUNCTION stats_reset_step(s)
@@ -73,6 +73,14 @@ void stats_reset_step(Stats* s)
      *
      * END FUNCTION
      */
+
+    if (p_stats == NULL){
+        return;
+    }
+
+    p_stats->neu_angekommen = 0;
+    p_stats->verlassen = 0;
+    p_stats->abgefertigte_wartende = 0;
 }
 
 void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step)

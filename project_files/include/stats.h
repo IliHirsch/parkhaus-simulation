@@ -17,9 +17,9 @@ void stats_init(Stats* p_stats);
  *
  * Reset betrifft nur Step-Werte (neu_angekommen, verlassen, abgefertigte_wartende).
  *
- * @param[in,out] s Stats-Struktur.
+ * @param[in,out] p_stats Stats-Struktur.
  */
-void stats_reset_step(Stats* s);
+void stats_reset_step(Stats* p_stats);
 
 /**
  * @brief Aktualisiert Momentanwerte und Aggregate nach einem Simulation-Step.
