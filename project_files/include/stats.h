@@ -8,9 +8,9 @@
 /**
  * @brief Initialisiert alle Statistikfelder mit 0.
  *
- * @param[out] s Stats-Struktur, die initialisiert werden soll.
+ * @param[out] p_stats Stats-Struktur, die initialisiert werden soll.
  */
-void stats_init(Stats* s);
+void stats_init(Stats* p_stats);
 
 /**
  * @brief Setzt die Step-Zähler für den aktuellen Zeitschritt zurück.

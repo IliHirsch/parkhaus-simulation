@@ -1,7 +1,7 @@
 #include "stats.h"
 #include <stdio.h>
 
-void stats_init(Stats* s)
+void stats_init(Stats* p_stats)
 {
     /*
      * FUNCTION stats_init(s)
@@ -32,6 +32,32 @@ void stats_init(Stats* s)
      *
      * END FUNCTION
      */
+
+    if (p_stats == NULL){
+        return;
+    }
+
+    p_stats->neu_angekommen = 0;
+    p_stats->verlassen = 0;
+    p_stats->abgefertigte_wartende = 0;
+
+    p_stats->belegung = 0;
+    p_stats->warteschlangenlaenge = 0;
+
+    p_stats->step_count = 0;
+    p_stats->sum_belegung = 0;
+    p_stats->sum_warteschlange = 0;
+    p_stats->max_warteschlange = 0;
+    p_stats->vollauslastung_steps = 0;
+
+    p_stats->sum_restparkdauer = 0;
+    p_stats->count_restparkdauer = 0;
+
+    p_stats->sum_wartezeit = 0;
+    p_stats->count_wartezeit = 0;
+
+    p_stats->sum_parkdauer = 0;
+    p_stats->count_parkdauer = 0;
 }
 
 void stats_reset_step(Stats* s)
