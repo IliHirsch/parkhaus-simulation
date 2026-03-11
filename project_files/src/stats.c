@@ -83,7 +83,7 @@ void stats_reset_step(Stats* p_stats)
     p_stats->abgefertigte_wartende = 0;
 }
 
-void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step)
+void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue* p_queue, int step)
 {
     /*
      * FUNCTION stats_update_step(s, p, q, step)
@@ -114,6 +114,34 @@ void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step)
      *
      * END FUNCTION
      */
+
+    if ((p_stats == NULL) || (p_parking == NULL) || (p_queue == NULL)){
+        return;
+    }
+
+    p_stats->belegung = p_parking->belegte_plaetze;
+    p_stats->warteschlangenlaenge = queue_size(p_queue);
+
+    p_stats->step_count = p_stats->step_count + 1;
+
+    p_stats->sum_belegung = p_stats->sum_belegung + p_stats->belegung;
+
+    p_stats->sum_warteschlange = p_stats->sum_warteschlange + p_stats->warteschlangenlaenge;
+
+    if (p_stats->warteschlangenlaenge > p_stats->max_warteschlange){
+        p_stats->max_warteschlange = p_stats->warteschlangenlaenge;
+    }
+
+    if (p_stats->belegung == p_parking->kapazitaet){
+        p_stats->vollauslastung_steps = p_stats->vollauslastung_steps + 1;
+    }
+
+    for (size_t i = 0; i < p_parking->kapazitaet; i++){
+        if (p_parking->slots[i].belegt == true){
+            p_stats->sum_restparkdauer = p_stats->sum_restparkdauer + p_parking->slots[i].fahrzeug.restparkdauer;
+            p_stats->count_restparkdauer = p_stats->count_restparkdauer + 1;
+        }
+    }
 }
 
 void stats_print_step(const Stats* s, int step)

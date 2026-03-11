@@ -31,7 +31,7 @@ void stats_reset_step(Stats* p_stats);
  * @param[in] q Aktueller Queue-Zustand.
  * @param[in] step Aktueller Zeitschritt (für mögliche Erweiterungen/Debug).
  */
-void stats_update_step(Stats* s, const ParkingLot* p, const Queue* q, int step);
+void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue* p_queue, int step);
 
 /**
  * @brief Gibt eine Zeile Step-Statistik auf der Konsole aus.
