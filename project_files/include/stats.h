@@ -50,6 +50,6 @@ void stats_print_step(const Stats* p_stats, int step);
  *
  * @param[in] s Stats-Struktur nach Ende der Simulation.
  */
-void stats_print_final(const Stats* s);
+void stats_print_final(const Stats* p_stats);
 
 #endif /* STATS_H */

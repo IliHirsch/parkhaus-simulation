@@ -188,7 +188,7 @@ void stats_print_step(const Stats* p_stats, int step)
     printf("\n");
 }
 
-void stats_print_final(const Stats* s)
+void stats_print_final(const Stats* p_stats)
 {
     /*
      * FUNCTION stats_print_final(s)
@@ -227,4 +227,40 @@ void stats_print_final(const Stats* s)
      *
      * END FUNCTION
      */
+
+    if (p_stats == NULL){
+        return;
+    }
+
+    printf("\n===== FINAL STATS =====\n");
+
+    if (p_stats->step_count == 0){
+        printf("Keine Schritte simuliert.\n");
+        return;
+    }
+
+    float avg_belegung = (float)p_stats->sum_belegung / (float)p_stats->step_count;
+    float avg_queue = (float)p_stats->sum_warteschlange / (float)p_stats->step_count;
+    float vollauslastung_prozent = ((float)p_stats->vollauslastung_steps * 100.0f) / (float)p_stats->step_count;
+
+    printf("Ø Belegung: %.2f\n", avg_belegung);
+    printf("Ø Warteschlange: %.2f\n", avg_queue);
+    printf("Max Warteschlange: %zu\n", p_stats->max_warteschlange);
+    printf("Vollauslastung: %.2f %% der Schritte\n", vollauslastung_prozent);
+
+    if (p_stats->count_wartezeit > 0){
+        float avg_wartezeit = (float)p_stats->sum_wartezeit / (float)p_stats->count_wartezeit;
+        printf("Ø Wartezeit (Queue->Park): %.2f\n", avg_wartezeit);
+    }
+    else{
+        printf("Ø Wartezeit: 0 Samples\n");
+    }
+
+    if (p_stats->count_parkdauer > 0){
+        float avg_parkdauer = (float)p_stats->sum_parkdauer / (float)p_stats->count_parkdauer;
+        printf("Ø Parkdauer: %.2f\n", avg_parkdauer);
+    }
+    else{
+        printf("Ø Parkdauer: 0 Samples\n");
+    }
 }
