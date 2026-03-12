@@ -1,6 +1,7 @@
 #include "stats.h"
 #include <stdio.h>
 
+// Initialisiert alle Statistikfelder mit 0
 void stats_init(Stats* p_stats)
 {
     /*
@@ -60,6 +61,7 @@ void stats_init(Stats* p_stats)
     p_stats->count_parkdauer = 0;
 }
 
+// Setzt die Zähler für jeden Step auf 0
 void stats_reset_step(Stats* p_stats)
 {
     /*
@@ -83,6 +85,7 @@ void stats_reset_step(Stats* p_stats)
     p_stats->abgefertigte_wartende = 0;
 }
 
+// Aktualisiert die Statsitiken für jeden Step
 void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue* p_queue, int step)
 {
     /*
@@ -144,6 +147,7 @@ void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue*
     }
 }
 
+// Gibt die Statistiken für einen Step in der Konsole aus
 void stats_print_step(const Stats* p_stats, int step)
 {
     /*
@@ -188,6 +192,7 @@ void stats_print_step(const Stats* p_stats, int step)
     printf("\n");
 }
 
+// Gibt die Statistiken am Ende der Simulation in der Konsole aus
 void stats_print_final(const Stats* p_stats)
 {
     /*

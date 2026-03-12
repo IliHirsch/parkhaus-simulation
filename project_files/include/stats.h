@@ -26,9 +26,9 @@ void stats_reset_step(Stats* p_stats);
  *
  * Setzt belegung und warteschlangenlaenge anhand des aktuellen Zustands und führt Summen/Maxima fort.
  *
- * @param[in,out] s Stats-Struktur.
- * @param[in] p Aktueller Parkhauszustand.
- * @param[in] q Aktueller Queue-Zustand.
+ * @param[in,out] p_stats Stats-Struktur.
+ * @param[in] p_parking Aktueller Parkhauszustand.
+ * @param[in] p_queue Aktueller Queue-Zustand.
  * @param[in] step Aktueller Zeitschritt (für mögliche Erweiterungen/Debug).
  */
 void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue* p_queue, int step);
@@ -38,7 +38,7 @@ void stats_update_step(Stats* p_stats, const ParkingLot* p_parking, const Queue*
  *
  * Mindestens: belegung, warteschlangenlaenge, neu_angekommen, verlassen, abgefertigte_wartende.
  *
- * @param[in] s Stats-Struktur (nach stats_update_step).
+ * @param[in] p_stats Stats-Struktur (nach stats_update_step).
  * @param[in] step Aktueller Zeitschritt.
  */
 void stats_print_step(const Stats* p_stats, int step);
@@ -48,7 +48,7 @@ void stats_print_step(const Stats* p_stats, int step);
  *
  * Berechnet Durchschnittswerte/Maxima und ggf. Wartezeiten/Parkdauern.
  *
- * @param[in] s Stats-Struktur nach Ende der Simulation.
+ * @param[in] p_stats Stats-Struktur nach Ende der Simulation.
  */
 void stats_print_final(const Stats* p_stats);
 
