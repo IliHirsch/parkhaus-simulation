@@ -6,12 +6,12 @@
 #include "stats.h"
 
 static void simulate_step(
-    ParkingLot* parking,
-    Queue* queue,
-    const SimConfig* cfg,
-    Stats* stats,
+    ParkingLot* p_parking,
+    Queue* p_queue,
+    const SimConfig* p_cfg,
+    Stats* p_stats,
     int step,
-    unsigned int* next_vehicle_id
+    unsigned int* p_next_vehicle_id
 )
 {
     /*
@@ -49,6 +49,54 @@ static void simulate_step(
      *
      * END FUNCTION
      */
+
+    SimStatus status = SIM_OK;
+    bool arrival_occurs = false;
+
+    /* Reset step counters */
+    stats_reset_step(p_stats);
+
+    /* 1) Process departures */
+    parking_process_departures(p_parking, p_stats);
+
+    /* 2) Possibly create a new arriving vehicle */
+    arrival_occurs = rng_chance_percent(p_cfg->ankunft_wahrscheinlichkeit_prozent);
+
+    if (arrival_occurs == true)
+    {
+        status = parking_handle_arrival(
+            p_parking,
+            p_queue,
+            p_cfg,
+            p_stats,
+            step,
+            p_next_vehicle_id);
+
+        if (status == SIM_KFZ_WARTEN)
+        {
+            /* Vehicle placed in queue */
+        }
+        else if (status == SIM_OK)
+        {
+            /* Vehicle parked immediately */
+        }
+        else
+        {
+            /* Error case (should not occur with valid config) */
+        }
+    }
+
+    /* 3) Process waiting queue */
+    parking_process_queue(p_parking, p_queue, p_stats, step);
+
+    /* 4) Update statistics */
+    stats_update_step(p_stats, p_parking, p_queue, step);
+
+    /* Print step statistics */
+    stats_print_step(p_stats, step);
+
+    /* Log step statistics */
+    io_log_step(p_stats, step);
 }
 
 void simulation_run(const SimConfig* p_cfg){
