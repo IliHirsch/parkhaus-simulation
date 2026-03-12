@@ -9,8 +9,7 @@ textbasiert, da:
 -   es plattformunabhängig ist,
 -   keine zusätzlichen Bibliotheken benötigt werden,
 -   es leicht nachvollziehbar und prüfbar ist,
--   und es exakt den internen Datenstrukturen (`Stats`, `ParkingLot`,
-    `Queue`) entspricht.
+-   und es exakt den internen Datenstrukturen entspricht.
 
 Es werden zwei Ebenen der Ausgabe unterschieden:
 
