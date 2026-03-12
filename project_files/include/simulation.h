@@ -12,6 +12,6 @@
  *
  * @param[in] cfg Simulationskonfiguration.
  */
-void simulation_run(const SimConfig* cfg);
+void simulation_run(const SimConfig* p_cfg);
 
 #endif /* SIMULATION_H */

@@ -51,8 +51,7 @@ static void simulate_step(
      */
 }
 
-void simulation_run(const SimConfig* cfg)
-{
+void simulation_run(const SimConfig* p_cfg){
     /*
      * FUNCTION simulation_run(cfg)
      * INPUT  cfg
@@ -94,4 +93,40 @@ void simulation_run(const SimConfig* cfg)
      *
      * END FUNCTION
      */
+
+    ParkingLot parking;
+    Queue queue;
+    Stats stats;
+
+    unsigned int next_vehicle_id = 1;
+    bool log_ok = false;
+
+    int step = 0;
+
+    // Initialisierung
+    rng_seed(p_cfg->seed);
+
+    parking_init(&parking, p_cfg->anzahl_stellplaetze);
+    queue_init(&queue);
+    stats_init(&stats);
+
+    log_ok = io_open_log("project_files/data/log.txt");
+
+    if (log_ok == false){
+        printf("Fehler: Log-Datei konnte nicht geöffnet werden\n");
+    }
+
+    // Simulation für die Zeitschritte
+    for (step = 0; step < p_cfg->sim_dauer_zeitschritte; step++){
+        simulate_step(&parking, &queue, p_cfg, &stats, step, &next_vehicle_id);
+    }
+
+    // Abschlussausgabe
+    stats_print_final(&stats);
+    io_log_final(&stats);
+
+    // Cleanup
+    io_close_log();
+    queue_free(&queue);
+    parking_free(&parking);
 }
