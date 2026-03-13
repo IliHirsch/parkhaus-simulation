@@ -1,5 +1,8 @@
 #include "io.h"
 #include <stdio.h>
+#include <stdbool.h>
+
+static FILE* p_log_file = NULL;
 
 bool io_open_log(const char* path)
 {
@@ -21,6 +24,17 @@ bool io_open_log(const char* path)
      *
      * END FUNCTION
      */
+
+    p_log_file = fopen(path, "w");
+
+    if (p_log_file == NULL){
+        return false;
+    }
+
+    fprintf(p_log_file, "=== Parkhaus-Simulation Log ===\n");
+    fprintf(p_log_file, "Format: Step | neu | verlassen | queue->park | belegung | queue\n");
+
+    return true;
 }
 
 void io_close_log(void)
