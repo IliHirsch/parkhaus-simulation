@@ -34,7 +34,7 @@ typedef enum {
 typedef struct {
     unsigned int id;   /**< Eindeutige Fahrzeug-ID (laufend vergeben). */
     int restparkdauer; /**< Verbleibende Parkdauer in Zeitschritten. */
-    int einfahrtzeit;  /**< Zeitpunkt der Ankunft am Parkhaus (nicht Einparkzeit!). */
+    int ankunftszeit;  /**< Zeitpunkt der Ankunft am Parkhaus. */
 } Vehicle;
 
 /* =========================

@@ -13,8 +13,9 @@
  *
  * @param[out] p Parkhausstruktur, die initialisiert wird.
  * @param[in] kapazitaet Anzahl Stellplätze.
+ * @return true wenn die Initialisierung erfolgreich war, sonst false.
  */
-void parking_init(ParkingLot* p, size_t kapazitaet);
+bool parking_init(ParkingLot* p, size_t kapazitaet);
 
 /**
  * @brief Gibt den Speicher der Slots frei und setzt das Parkhaus zurück.
@@ -34,7 +35,7 @@ int parking_find_free_slot(const ParkingLot* p);
 /**
  * @brief Behandelt die Ankunft eines Fahrzeugs (einparken oder in Warteschlange).
  *
- * Erzeugt ein neues Vehicle (ID, restparkdauer, einfahrtzeit) und aktualisiert Step- und Aggregat-Stats.
+ * Erzeugt ein neues Vehicle (ID, restparkdauer, ankunftszeit) und aktualisiert Step- und Aggregat-Stats.
  *
  * @param[in,out] p Parkhausstruktur.
  * @param[in,out] q Warteschlange für wartende Fahrzeuge.
@@ -64,7 +65,7 @@ void parking_process_departures(ParkingLot* p, Stats* stats);
 /**
  * @brief Arbeitet die Warteschlange ab, solange Plätze frei sind.
  *
- * Fahrzeuge werden FIFO entnommen und eingeparkt. Wartezeit wird als current_time - einfahrtzeit erfasst.
+ * Fahrzeuge werden FIFO entnommen und eingeparkt. Wartezeit wird als current_time - ankunftszeit erfasst.
  *
  * @param[in,out] p Parkhausstruktur.
  * @param[in,out] q Warteschlange.
