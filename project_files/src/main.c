@@ -1,26 +1,28 @@
+#include <stdio.h>
+#include <stdbool.h>
+
 #include "config.h"
 #include "simulation.h"
 
+/**
+ * @brief Startpunkt des Programms.
+ *
+ * Liest die Simulationskonfiguration vom Terminal ein, prüft die Eingaben
+ * und startet bei erfolgreicher Konfiguration die Simulation.
+ *
+ * @return 0 bei erfolgreicher Ausführung, sonst 1.
+ */
 int main(void)
 {
-    /*
-     * FUNCTION main() RETURNS exit_code
-     * OUTPUT Programmstart, liest Konfiguration, startet Simulation
-     *
-     * DECLARE cfg : SimConfig
-     * DECLARE ok  : bool
-     *
-     * ok <- CALL config_read_from_terminal(&cfg)
-     *
-     * IF ok == false THEN
-     *     OUTPUT "Ungültige Eingabe"
-     *     RETURN 1
-     * END IF
-     *
-     * CALL simulation_run(&cfg)
-     *
-     * RETURN 0
-     *
-     * END FUNCTION
-     */
+    SimConfig cfg;
+    bool ok = config_read_from_terminal(&cfg);
+
+    if (!ok) {
+        printf("Ungueltige Eingabe.\n");
+        return 1;
+    }
+
+    simulation_run(&cfg);
+
+    return 0;
 }
