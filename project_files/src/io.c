@@ -1,6 +1,7 @@
 #include "io.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "types.h"
 
 static FILE* p_log_file = NULL;
 
@@ -54,7 +55,7 @@ void io_close_log(void)
     }
 }
 
-void io_log_step(const Stats* s, int step)
+void io_log_step(const Stats* p_stats, int step)
 {
     /*
      * FUNCTION io_log_step(s, step)
@@ -71,6 +72,37 @@ void io_log_step(const Stats* s, int step)
      *
      * END FUNCTION
      */
+
+    size_t avg_rest = 0;
+
+    if (p_log_file == NULL){
+        return;
+    }
+
+    if (p_stats == NULL){
+        return;
+    }
+
+    fprintf(
+        p_log_file,
+        "Step %d | neu=%zu | verlassen=%zu | queue->park=%zu | belegung=%zu | queue=%zu\n",
+        step,
+        p_stats->neu_angekommen,
+        p_stats->verlassen,
+        p_stats->abgefertigte_wartende,
+        p_stats->belegung,
+        p_stats->warteschlangenlaenge
+    );
+
+    if (p_stats->count_restparkdauer > 0){
+        avg_rest = p_stats->sum_restparkdauer / p_stats->count_restparkdauer;
+
+        fprintf(
+            p_log_file,
+            "    AvgRest=%zu\n",
+            avg_rest
+        );
+    }
 }
 
 void io_log_final(const Stats* s)
