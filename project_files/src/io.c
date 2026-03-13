@@ -47,6 +47,11 @@ void io_close_log(void)
      * END IF
      * END FUNCTION
      */
+
+    if (p_log_file != NULL){
+        fclose(p_log_file);
+        p_log_file = NULL;
+    }
 }
 
 void io_log_step(const Stats* s, int step)
