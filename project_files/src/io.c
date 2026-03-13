@@ -96,12 +96,7 @@ void io_log_step(const Stats* p_stats, int step)
 
     if (p_stats->count_restparkdauer > 0){
         avg_rest = p_stats->sum_restparkdauer / p_stats->count_restparkdauer;
-
-        fprintf(
-            p_log_file,
-            "    AvgRest=%zu\n",
-            avg_rest
-        );
+        fprintf(p_log_file, "    AvgRest=%zu\n", avg_rest);
     }
 }
 
