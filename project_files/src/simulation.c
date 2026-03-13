@@ -53,33 +53,35 @@ static void simulate_step(
     SimStatus status = SIM_OK;
     bool arrival_occurs = false;
 
-    stats_reset_step(p_stats);
-
-    parking_process_departures(p_parking, p_stats);
-
-    arrival_occurs = rng_chance_percent(p_cfg->ankunft_wahrscheinlichkeit_prozent);
-
-    if (arrival_occurs == true){
-        status = parking_handle_arrival(
-            p_parking,
-            p_queue,
-            p_cfg,
-            p_stats,
-            step,
-            p_next_vehicle_id);
-
-        if (status == SIM_KFZ_WARTEN){
-            /* Vehicle placed in queue */
-        }
-        else if (status == SIM_OK){
-            /* Vehicle parked immediately */
-        }
-        else{
-            /* Error case (should not occur with valid config) */
-        }
+    if (p_parking == NULL || p_queue == NULL || p_cfg == NULL || p_stats == NULL || p_next_vehicle_id == NULL){
+        return;
     }
 
+    stats_reset_step(p_stats);
+
+    //Abfahrten
+    parking_process_departures(p_parking, p_stats);
+
+    //Ankunft
+    arrival_occurs = rng_chance_percent(p_cfg->ankunft_wahrscheinlichkeit_prozent);
+
+    /* Möglichkeit für Debugging
+
+    if (arrival_occurs == true){
+        status = parking_handle_arrival(p_parking, p_queue, p_cfg, p_stats, step, p_next_vehicle_id);
+        if (status == SIM_KFZ_WARTEN){
+        }
+        else if (status == SIM_OK){
+        }
+        else{
+        }
+    }
+    */
+
+    // Warteschlange abarbeiten
     parking_process_queue(p_parking, p_queue, p_stats, step);
+
+    //Statistiken aktualisieren, ausgeben, loggen
     stats_update_step(p_stats, p_parking, p_queue, step);
     stats_print_step(p_stats, step);
     io_log_step(p_stats, step);
