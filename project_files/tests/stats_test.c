@@ -7,6 +7,23 @@
 #include "types.h"
 
 /**
+ * @brief Hilfsfunktion zum Erzeugen eines Test-Fahrzeugs.
+ *
+ * @param[in] id Fahrzeug-ID.
+ * @param[in] restparkdauer Restparkdauer.
+ * @param[in] ankunftszeit Ankunftszeit.
+ * @return Erzeugtes Vehicle.
+ */
+static Vehicle make_vehicle(unsigned int id, int restparkdauer, int ankunftszeit)
+{
+    Vehicle v;
+    v.id = id;
+    v.restparkdauer = restparkdauer;
+    v.ankunftszeit = ankunftszeit;
+    return v;
+}
+
+/**
  * @brief Prüft, dass stats_init alle Felder auf 0 setzt.
  */
 static void test_stats_init_sets_all_fields_to_zero(void)
