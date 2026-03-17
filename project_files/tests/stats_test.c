@@ -23,6 +23,10 @@ static Vehicle make_vehicle(unsigned int id, int restparkdauer, int ankunftszeit
     return v;
 }
 
+/* =========================
+   stats_init
+   ========================= */
+
 /**
  * @brief Prüft, dass stats_init alle Felder auf 0 setzt.
  */
@@ -62,30 +66,46 @@ static void test_stats_init_resets_previously_modified_values(void)
 {
     Stats stats;
 
+    stats.neu_angekommen = 5U;
+    stats.verlassen = 2U;
+    stats.abgefertigte_wartende = 3U;
+    stats.belegung = 4U;
+    stats.warteschlangenlaenge = 6U;
+    stats.step_count = 7U;
+    stats.sum_belegung = 8U;
+    stats.sum_warteschlange = 9U;
+    stats.max_warteschlange = 10U;
+    stats.vollauslastung_steps = 11U;
+    stats.sum_restparkdauer = 12U;
+    stats.count_restparkdauer = 13U;
+    stats.sum_wartezeit = 14U;
+    stats.count_wartezeit = 15U;
+    stats.sum_parkdauer = 16U;
+    stats.count_parkdauer = 17U;
+
     stats_init(&stats);
 
     assert(stats.neu_angekommen == 0U);
     assert(stats.verlassen == 0U);
     assert(stats.abgefertigte_wartende == 0U);
-
     assert(stats.belegung == 0U);
     assert(stats.warteschlangenlaenge == 0U);
-
     assert(stats.step_count == 0U);
     assert(stats.sum_belegung == 0U);
     assert(stats.sum_warteschlange == 0U);
     assert(stats.max_warteschlange == 0U);
     assert(stats.vollauslastung_steps == 0U);
-
     assert(stats.sum_restparkdauer == 0U);
     assert(stats.count_restparkdauer == 0U);
-
     assert(stats.sum_wartezeit == 0U);
     assert(stats.count_wartezeit == 0U);
-
     assert(stats.sum_parkdauer == 0U);
-    assert(stats.count_parkdauer == 0U); 
+    assert(stats.count_parkdauer == 0U);
 }
+
+/* =========================
+   stats_reset_step
+   ========================= */
 
 /**
  * @brief Prüft, dass stats_reset_step nur die Step-Zähler zurücksetzt.
@@ -132,6 +152,10 @@ static void test_stats_reset_step_keeps_zero_step_counters_at_zero(void)
     assert(stats.verlassen == 0U);
     assert(stats.abgefertigte_wartende == 0U);
 }
+
+/* =========================
+   stats_update_step
+   ========================= */
 
 /**
  * @brief Prüft, dass stats_update_step Belegung, Queue-Länge und Summen korrekt aktualisiert.
@@ -220,17 +244,56 @@ static void test_stats_update_step_tracks_full_utilization_and_max_queue(void)
     free(parking.slots);
 }
 
+/* =========================
+   stats_print
+   ========================= */
+
+
 /**
  * @brief Prüft, dass stats_print_step mit gültigen Daten aufrufbar ist.
  */
 static void test_stats_print_step_runs_with_valid_stats(void)
-{}
+{
+    Stats stats;
+
+    stats_init(&stats);
+    stats.belegung = 2U;
+    stats.warteschlangenlaenge = 1U;
+    stats.neu_angekommen = 1U;
+    stats.verlassen = 0U;
+    stats.abgefertigte_wartende = 1U;
+    stats.sum_restparkdauer = 6U;
+    stats.count_restparkdauer = 2U;
+
+    stats_print_step(&stats, 1);
+
+    assert(true);
+}
 
 /**
  * @brief Prüft, dass stats_print_final mit gültigen Daten aufrufbar ist.
  */
 static void test_stats_print_final_runs_with_valid_stats(void)
-{}
+{
+    Stats stats;
+
+    stats_init(&stats);
+    stats.step_count = 2U;
+    stats.sum_belegung = 3U;
+    stats.sum_warteschlange = 1U;
+    stats.max_warteschlange = 1U;
+    stats.vollauslastung_steps = 1U;
+    stats.sum_wartezeit = 4U;
+    stats.count_wartezeit = 2U;
+    stats.sum_parkdauer = 7U;
+    stats.count_parkdauer = 2U;
+    stats.sum_restparkdauer = 5U;
+    stats.count_restparkdauer = 2U;
+
+    stats_print_final(&stats);
+
+    assert(true);
+}
 
 int main(void)
 {
