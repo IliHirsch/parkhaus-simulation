@@ -40,9 +40,28 @@ static SimConfig make_config(size_t kapazitaet, int max_parkdauer)
    ========================= */
 
 static void test_parking_init_creates_empty_parking_lot(void)
-{}
+{
+    ParkingLot parking;
+    bool ok = parking_init(&parking, 3U);
+
+    assert(ok == true);
+    assert(parking.slots != NULL);
+    assert(parking.kapazitaet == 3U);
+    assert(parking.belegte_plaetze == 0U);
+
+    for (size_t i = 0U; i < parking.kapazitaet; i++) {
+        assert(parking.slots[i].belegt == false);
+    }
+
+    parking_free(&parking);
+}
 static void test_parking_init_with_zero_capacity_returns_false(void)
-{}
+{
+    ParkingLot parking;
+    bool ok = parking_init(&parking, 0U);
+
+    assert(ok == false);
+}
 
 
 
