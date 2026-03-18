@@ -63,6 +63,15 @@ static void test_parking_init_with_zero_capacity_returns_false(void)
     assert(ok == false);
 }
 
+/* =========================
+   parking_free
+   ========================= */
+
+static void test_parking_free_resets_all_fields(void)
+{}
+static void test_parking_free_with_null_does_not_crash(void)
+{}
+
 
 
 
@@ -71,6 +80,8 @@ int main (){
     test_parking_init_creates_empty_parking_lot();
     test_parking_init_with_zero_capacity_returns_false();
 
+    test_parking_free_resets_all_fields();
+    test_parking_free_with_null_does_not_crash();
 
     printf("Alle Parking-Tests erfolgreich.\n");
     return 0;
