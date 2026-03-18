@@ -1,0 +1,13 @@
+## Begründung der Unit-Tests
+
+Zur Absicherung der Programmlogik wurden für die zentralen Module gezielt Unit-Tests mit `assert.h` erstellt. Ziel war es, die wichtigsten Funktionen nicht nur im Gesamtablauf der Simulation, sondern auch isoliert auf ihre Korrektheit zu prüfen. Dabei wurden insbesondere typische Standardfälle sowie relevante Randfälle berücksichtigt, zum Beispiel leere und befüllte Warteschlangen, freie und belegte Stellplätze, gültige und ungültige Konfigurationen sowie korrektes Verhalten bei Datei- und Log-Ausgaben.
+
+Die Tests konzentrieren sich auf die öffentlich relevanten Schnittstellen der Module `queue`, `rng`, `stats`, `parking`, `config`, `io` und `simulation`. Dadurch konnte überprüft werden, ob die einzelnen Programmteile in sich korrekt arbeiten und im Zusammenspiel das erwartete Verhalten liefern. Die modulare Struktur des Projekts war dabei ein Vorteil, da sich Funktionen gezielt und unabhängig voneinander testen ließen.
+
+Um die Vorgaben der Aufgabenstellung sicher zu erfüllen, haben wir für `jede getestete Funktion jeweils zwei Unit-Tests erstellt`. Dadurch sollte nicht nur der Normalfall, sondern auch mindestens ein zusätzlicher Rand- oder Fehlerfall abgedeckt werden. Dieses Vorgehen sollte sicherstellen, dass die Funktionen nicht nur unter idealen Bedingungen, sondern auch bei abweichenden Eingaben oder Grenzsituationen nachvollziehbar geprüft werden.
+
+Grundsätzlich haben wir uns bewusst dafür entschieden, Funktionen möglichst direkt zu testen, anstatt umfangreich zu begründen, warum für bestimmte Funktionen keine eigenen Unit-Tests erstellt wurden. Unser Ziel war es, die Funktionalität des Programms so weit wie möglich praktisch nachzuweisen, statt fehlende Tests nur theoretisch zu rechtfertigen. Dadurch wollten wir die Anforderungen der Aufgabenstellung möglichst vollständig erfüllen und gleichzeitig die Nachvollziehbarkeit unserer Lösung verbessern.
+
+Auf separate Tests für `main()` wurde verzichtet, da diese Funktion im Wesentlichen nur den Programmeinstieg bildet, die Konfiguration einliest und anschließend die Simulation startet. Interne `static`-Hilfsfunktionen wurden ebenfalls nicht direkt isoliert getestet, sondern indirekt über die jeweils öffentlichen Modul-Funktionen mit abgedeckt. Dieses Vorgehen wurde gewählt, weil sich die eigentliche fachliche Relevanz im beobachtbaren Verhalten der öffentlichen Schnittstellen zeigt und dadurch die Kapselung der Module erhalten bleibt.
+
+Insgesamt dienten die Unit-Tests dazu, die Korrektheit der Kernlogik nachvollziehbar abzusichern, Fehler frühzeitig sichtbar zu machen und die Stabilität der Programmlösung vor der Abgabe zu erhöhen.
