@@ -7,10 +7,7 @@
 
 /**
  * @brief Schreibt Text in eine Datei.
- *
- * @param[in] path Pfad zur Datei.
- * @param[in] text Inhalt, der geschrieben werden soll.
- * @return true wenn erfolgreich geschrieben wurde, sonst false.
+ * 
  */
 static bool write_text_file(const char* path, const char* text){
     FILE* p_file = fopen(path, "w");
@@ -29,12 +26,15 @@ static bool write_text_file(const char* path, const char* text){
 
 /**
  * @brief Leitet stdin auf eine Datei um.
- *
- * @param[in] path Pfad zur Eingabedatei.
- * @return true wenn stdin erfolgreich umgeleitet wurde, sonst false.
  */
 static bool redirect_stdin_to_file(const char* path){
-    FILE* p_file = freopen(path, "r", stdin);
+    FILE* p_file;
+
+    if (path == NULL){
+        return false;
+    }
+
+    p_file = freopen(path, "r", stdin);
     return (p_file != NULL);
 }
 
@@ -83,6 +83,7 @@ static void test_cfg_read_valid(void){
     assert(cfg.ankunft_wahrscheinlichkeit_prozent == 40);
     assert(cfg.seed == 99U);
 
+    assert(fclose(stdin) == 0);   // MINIMAL FIX
     remove(p_path);
 }
 
@@ -95,6 +96,7 @@ static void test_cfg_read_invalid(void){
 
     assert(config_read_from_terminal(&cfg) == false);
 
+    assert(fclose(stdin) == 0);   // MINIMAL FIX
     remove(p_path);
 }
 
