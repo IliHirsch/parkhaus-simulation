@@ -30,7 +30,7 @@ static bool file_exists(const char* path){
  * @param[in] buffer_size Größe des Puffers.
  * @return true wenn erfolgreich gelesen wurde, sonst false.
  */
-static bool read_file_to_buffer(const char* path, char* buffer, size_t buffer_size){
+static bool read_file(const char* path, char* buffer, size_t buffer_size){
     FILE* p_file = fopen(path, "r");
     size_t read_count;
     if (p_file == NULL || buffer == NULL || buffer_size == 0U){
@@ -50,7 +50,7 @@ static bool read_file_to_buffer(const char* path, char* buffer, size_t buffer_si
 /**
  * @brief Prüft, dass simulation_run mit gültiger Konfiguration eine Log-Datei erzeugt.
  */
-static void test_simulation_run_creates_log_file_for_valid_config(void){
+static void test_sim_run_valid_creates_log(void){
     SimConfig cfg;
     char buffer[4096];
     const char* p_log_path = "parkhaus_log.txt";
@@ -66,7 +66,7 @@ static void test_simulation_run_creates_log_file_for_valid_config(void){
     simulation_run(&cfg);
 
     assert(file_exists(p_log_path) == true);
-    assert(read_file_to_buffer(p_log_path, buffer, sizeof(buffer)) == true);
+    assert(read_file(p_log_path, buffer, sizeof(buffer)) == true);
     assert(strstr(buffer, "=== Parkhaus-Simulation Log ===") != NULL);
     assert(strstr(buffer, "===== FINAL STATS =====") != NULL);
 
@@ -76,7 +76,7 @@ static void test_simulation_run_creates_log_file_for_valid_config(void){
 /**
  * @brief Prüft, dass simulation_run bei ungültiger Konfiguration keine Log-Datei erzeugt.
  */
-static void test_simulation_run_with_invalid_config_returns_without_log_file(void){
+static void test_sim_run_invalid_no_log(void){
     SimConfig cfg;
     const char* p_log_path = "parkhaus_log.txt";
 
@@ -99,8 +99,8 @@ static void test_simulation_run_with_invalid_config_returns_without_log_file(voi
  * @return 0 bei erfolgreichem Testlauf.
  */
 int main(void){
-    test_simulation_run_creates_log_file_for_valid_config();
-    test_simulation_run_with_invalid_config_returns_without_log_file();
+    test_sim_run_valid_creates_log();
+    test_sim_run_invalid_no_log();
 
     printf("Alle Simulation-Tests erfolgreich.\n");
     return 0;
