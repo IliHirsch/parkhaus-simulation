@@ -97,3 +97,14 @@ static void test_cfg_read_invalid(void){
 
     remove(p_path);
 }
+
+int main(void){
+    test_cfg_val_valid();
+    test_cfg_val_invalid_prob();
+
+    test_cfg_read_valid();
+    test_cfg_read_invalid();
+
+    printf("Alle Config-Tests erfolgreich.\n");
+    return 0;
+}
