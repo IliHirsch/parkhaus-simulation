@@ -140,9 +140,9 @@ static void test_io_log_step_with_null_stats_does_not_crash(void)
    ========================= */
 
 /**
- * @brief Prüft, dass io_log_step bei NULL-Statistik keinen Absturz verursacht.
+ * @brief Prüft, dass io_log_final die Abschlussstatistik korrekt schreibt.
  */
-static void test_io_log_step_with_null_stats_does_not_crash(void)
+static void test_io_log_final_writes_final_statistics(void)
 {
     const char* p_path = "test_io_log_final.txt";
     char buffer[2048];
@@ -175,9 +175,9 @@ static void test_io_log_step_with_null_stats_does_not_crash(void)
 }
 
 /**
- * @brief Prüft, dass io_log_final die Abschlussstatistik korrekt schreibt.
+ * @brief Prüft, dass io_log_final bei NULL-Statistik keinen Absturz verursacht.
  */
-static void test_io_log_final_writes_final_statistics(void)
+static void test_io_log_final_with_null_stats_does_not_crash(void)
 {
     const char* p_path = "test_io_log_final_null.txt";
 
