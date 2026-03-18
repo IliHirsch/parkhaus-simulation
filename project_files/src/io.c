@@ -1,4 +1,4 @@
-#include "io.h"
+#include "../include/io.h"
 #include <stdio.h>
 
 static FILE* p_log_file = NULL;
