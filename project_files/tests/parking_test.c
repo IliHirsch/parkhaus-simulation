@@ -130,9 +130,89 @@ static void test_parking_find_free_slot_returns_minus_one_when_full(void)
    ========================= */
 
 static void test_parking_handle_arrival_parks_vehicle_when_slot_is_free(void)
-{}
+{
+     ParkingLot parking;
+    Queue queue;
+    Stats stats;
+    SimConfig cfg = make_config(2U, 1);
+    unsigned int next_vehicle_id = 1U;
+
+    assert(parking_init(&parking, cfg.anzahl_stellplaetze) == true);
+    queue_init(&queue);
+    stats_init(&stats);
+    rng_seed(1U);
+
+    SimStatus status = parking_handle_arrival(
+        &parking,
+        &queue,
+        &cfg,
+        &stats,
+        5,
+        &next_vehicle_id
+    );
+
+    assert(status == SIM_OK);
+    assert(parking.belegte_plaetze == 1U);
+    assert(queue_size(&queue) == 0U);
+
+    assert(parking.slots[0].belegt == true);
+    assert(parking.slots[0].fahrzeug.id == 1U);
+    assert(parking.slots[0].fahrzeug.restparkdauer == 1);
+    assert(parking.slots[0].fahrzeug.ankunftszeit == 5);
+
+    assert(next_vehicle_id == 2U);
+    assert(stats.neu_angekommen == 1U);
+    assert(stats.sum_parkdauer == 1U);
+    assert(stats.count_parkdauer == 1U);
+
+    queue_free(&queue);
+    parking_free(&parking);
+}
+
 static void test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free(void)
-{}
+{
+    ParkingLot parking;
+    Queue queue;
+    Stats stats;
+    SimConfig cfg = make_config(1U, 1);
+    unsigned int next_vehicle_id = 7U;
+
+    assert(parking_init(&parking, cfg.anzahl_stellplaetze) == true);
+    queue_init(&queue);
+    stats_init(&stats);
+    rng_seed(1U);
+
+    parking.slots[0].belegt = true;
+    parking.slots[0].fahrzeug = make_vehicle(99U, 2, 0);
+    parking.belegte_plaetze = 1U;
+
+    SimStatus status = parking_handle_arrival(
+        &parking,
+        &queue,
+        &cfg,
+        &stats,
+        3,
+        &next_vehicle_id
+    );
+
+    assert(status == SIM_KFZ_WARTEN);
+    assert(parking.belegte_plaetze == 1U);
+    assert(queue_size(&queue) == 1U);
+
+    Vehicle out_vehicle;
+    assert(queue_pop(&queue, &out_vehicle) == true);
+    assert(out_vehicle.id == 7U);
+    assert(out_vehicle.restparkdauer == 1);
+    assert(out_vehicle.ankunftszeit == 3);
+
+    assert(next_vehicle_id == 8U);
+    assert(stats.neu_angekommen == 1U);
+    assert(stats.sum_parkdauer == 1U);
+    assert(stats.count_parkdauer == 1U);
+
+    queue_free(&queue);
+    parking_free(&parking);
+}
 
 
 int main (){
