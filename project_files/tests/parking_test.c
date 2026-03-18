@@ -219,9 +219,47 @@ static void test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free(void
    ========================= */
 
 static void test_parking_process_departures_decrements_restparkdauer(void)
-{}
+{
+    ParkingLot parking;
+    Stats stats;
+
+    assert(parking_init(&parking, 2U) == true);
+    stats_init(&stats);
+
+    parking.slots[0].belegt = true;
+    parking.slots[0].fahrzeug = make_vehicle(1U, 3, 0);
+    parking.belegte_plaetze = 1U;
+
+    parking_process_departures(&parking, &stats);
+
+    assert(parking.slots[0].belegt == true);
+    assert(parking.slots[0].fahrzeug.restparkdauer == 2);
+    assert(parking.belegte_plaetze == 1U);
+    assert(stats.verlassen == 0U);
+
+    parking_free(&parking);
+}
+
 static void test_parking_process_departures_removes_vehicle_when_restparkdauer_reaches_zero(void)
-{}
+{
+    ParkingLot parking;
+    Stats stats;
+
+    assert(parking_init(&parking, 2U) == true);
+    stats_init(&stats);
+
+    parking.slots[0].belegt = true;
+    parking.slots[0].fahrzeug = make_vehicle(1U, 1, 0);
+    parking.belegte_plaetze = 1U;
+
+    parking_process_departures(&parking, &stats);
+
+    assert(parking.slots[0].belegt == false);
+    assert(parking.belegte_plaetze == 0U);
+    assert(stats.verlassen == 1U);
+
+    parking_free(&parking);
+}
 
 
 int main (){
