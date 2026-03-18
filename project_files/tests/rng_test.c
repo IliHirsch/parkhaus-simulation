@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "rng.h"
+#include "../include/rng.h"
 
 
 /**

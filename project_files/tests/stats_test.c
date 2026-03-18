@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "queue.h"
-#include "stats.h"
-#include "types.h"
+#include "../include/queue.h"
+#include "../include/stats.h"
+#include "../include/types.h"
 
 /**
  * @brief Hilfsfunktion zum Erzeugen eines Test-Fahrzeugs.
