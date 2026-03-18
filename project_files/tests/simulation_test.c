@@ -92,3 +92,16 @@ static void test_simulation_run_with_invalid_config_returns_without_log_file(voi
 
     assert(file_exists(p_log_path) == false);
 }
+
+/**
+ * @brief Führt alle Unit-Tests des Simulation-Moduls aus.
+ *
+ * @return 0 bei erfolgreichem Testlauf.
+ */
+int main(void){
+    test_simulation_run_creates_log_file_for_valid_config();
+    test_simulation_run_with_invalid_config_returns_without_log_file();
+
+    printf("Alle Simulation-Tests erfolgreich.\n");
+    return 0;
+}
