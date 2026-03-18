@@ -85,3 +85,15 @@ static void test_cfg_read_valid(void){
 
     remove(p_path);
 }
+
+static void test_cfg_read_invalid(void){
+    const char* p_path = "test_config_invalid_input.txt";
+    SimConfig cfg;
+
+    assert(write_text_file(p_path, "12\n7\n30\n120\n99\n") == true);
+    assert(redirect_stdin_to_file(p_path) == true);
+
+    assert(config_read_from_terminal(&cfg) == false);
+
+    remove(p_path);
+}
