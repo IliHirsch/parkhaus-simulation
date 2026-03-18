@@ -93,10 +93,37 @@ static void test_parking_free_with_null_does_not_crash(void)
 /* =========================
    parking_find_free_slot
    ========================= */
+
 static void test_parking_find_free_slot_returns_first_free_index(void)
-{}
+{
+    ParkingLot parking;
+    bool ok = parking_init(&parking, 3U);
+
+    assert(ok == true);
+
+    parking.slots[0].belegt = true;
+    parking.slots[1].belegt = false;
+    parking.slots[2].belegt = true;
+
+    assert(parking_find_free_slot(&parking) == 1);
+
+    parking_free(&parking);
+}
+
 static void test_parking_find_free_slot_returns_minus_one_when_full(void)
-{}
+{
+    ParkingLot parking;
+    bool ok = parking_init(&parking, 2U);
+
+    assert(ok == true);
+
+    parking.slots[0].belegt = true;
+    parking.slots[1].belegt = true;
+
+    assert(parking_find_free_slot(&parking) == -1);
+
+    parking_free(&parking);
+}
 
 
 
