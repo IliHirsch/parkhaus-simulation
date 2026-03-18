@@ -26,3 +26,14 @@ static bool write_text_file(const char* path, const char* text){
     fclose(p_file);
     return true;
 }
+
+/**
+ * @brief Leitet stdin auf eine Datei um.
+ *
+ * @param[in] path Pfad zur Eingabedatei.
+ * @return true wenn stdin erfolgreich umgeleitet wurde, sonst false.
+ */
+static bool redirect_stdin_to_file(const char* path){
+    FILE* p_file = freopen(path, "r", stdin);
+    return (p_file != NULL);
+}
