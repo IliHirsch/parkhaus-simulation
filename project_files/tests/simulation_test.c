@@ -42,3 +42,33 @@ static bool read_file_to_buffer(const char* path, char* buffer, size_t buffer_si
     fclose(p_file);
     return true;
 }
+
+/* =========================
+   simulation_run
+   ========================= */
+
+/**
+ * @brief Prüft, dass simulation_run mit gültiger Konfiguration eine Log-Datei erzeugt.
+ */
+static void test_simulation_run_creates_log_file_for_valid_config(void){
+    SimConfig cfg;
+    char buffer[4096];
+    const char* p_log_path = "parkhaus_log.txt";
+
+    remove(p_log_path);
+
+    cfg.anzahl_stellplaetze = 3U;
+    cfg.max_parkdauer = 2;
+    cfg.sim_dauer_zeitschritte = 5;
+    cfg.ankunft_wahrscheinlichkeit_prozent = 100;
+    cfg.seed = 1U;
+
+    simulation_run(&cfg);
+
+    assert(file_exists(p_log_path) == true);
+    assert(read_file_to_buffer(p_log_path, buffer, sizeof(buffer)) == true);
+    assert(strstr(buffer, "=== Parkhaus-Simulation Log ===") != NULL);
+    assert(strstr(buffer, "===== FINAL STATS =====") != NULL);
+
+    remove(p_log_path);
+}
