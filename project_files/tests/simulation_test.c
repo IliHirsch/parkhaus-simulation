@@ -72,3 +72,23 @@ static void test_simulation_run_creates_log_file_for_valid_config(void){
 
     remove(p_log_path);
 }
+
+/**
+ * @brief Prüft, dass simulation_run bei ungültiger Konfiguration keine Log-Datei erzeugt.
+ */
+static void test_simulation_run_with_invalid_config_returns_without_log_file(void){
+    SimConfig cfg;
+    const char* p_log_path = "parkhaus_log.txt";
+
+    remove(p_log_path);
+
+    cfg.anzahl_stellplaetze = 0U;
+    cfg.max_parkdauer = 2;
+    cfg.sim_dauer_zeitschritte = 5;
+    cfg.ankunft_wahrscheinlichkeit_prozent = 50;
+    cfg.seed = 1U;
+
+    simulation_run(&cfg);
+
+    assert(file_exists(p_log_path) == false);
+}
