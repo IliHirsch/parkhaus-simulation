@@ -214,6 +214,15 @@ static void test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free(void
     parking_free(&parking);
 }
 
+/* =========================
+   parking_process_departures
+   ========================= */
+
+static void test_parking_process_departures_decrements_restparkdauer(void)
+{}
+static void test_parking_process_departures_removes_vehicle_when_restparkdauer_reaches_zero(void)
+{}
+
 
 int main (){
 
@@ -228,6 +237,9 @@ int main (){
 
     test_parking_handle_arrival_parks_vehicle_when_slot_is_free();
     test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free();
+
+    test_parking_process_departures_decrements_restparkdauer();
+    test_parking_process_departures_removes_vehicle_when_restparkdauer_reaches_zero();
 
     printf("Alle Parking-Tests erfolgreich.\n");
     return 0;
