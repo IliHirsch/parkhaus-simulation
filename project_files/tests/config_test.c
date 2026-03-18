@@ -52,3 +52,14 @@ static void test_cfg_val_valid(void){
 
     assert(config_validate(&cfg) == true);
 }
+
+static void test_cfg_val_invalid_prob(void){
+    SimConfig cfg;
+    cfg.anzahl_stellplaetze = 10U;
+    cfg.max_parkdauer = 5;
+    cfg.sim_dauer_zeitschritte = 20;
+    cfg.ankunft_wahrscheinlichkeit_prozent = 150;
+    cfg.seed = 123U;
+
+    assert(config_validate(&cfg) == false);
+}
