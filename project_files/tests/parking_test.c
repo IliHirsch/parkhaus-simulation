@@ -83,12 +83,20 @@ static void test_parking_free_resets_all_fields(void)
     assert(parking.kapazitaet == 0U);
     assert(parking.belegte_plaetze == 0U);
 }
+
 static void test_parking_free_with_null_does_not_crash(void)
 {
     parking_free(NULL);
     assert(true);
 }
 
+/* =========================
+   parking_find_free_slot
+   ========================= */
+static void test_parking_find_free_slot_returns_first_free_index(void)
+{}
+static void test_parking_find_free_slot_returns_minus_one_when_full(void)
+{}
 
 
 
@@ -99,6 +107,9 @@ int main (){
 
     test_parking_free_resets_all_fields();
     test_parking_free_with_null_does_not_crash();
+
+    test_parking_find_free_slot_returns_first_free_index();
+    test_parking_find_free_slot_returns_minus_one_when_full();
 
     printf("Alle Parking-Tests erfolgreich.\n");
     return 0;
