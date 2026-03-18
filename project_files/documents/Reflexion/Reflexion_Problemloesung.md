@@ -1,6 +1,27 @@
+# Erklärung und Reflexion des Projektes
+
 ## Lösung der Aufgabenstellung
 
-Unsere Überlegung war es, die Struktur so übersichtlich und die Abschnitte so modular wir möglich zu gestalten. Deshalb haben wir uns für die Ordnerstruktur mit "documents", "include", "src" und "tests" entschieden, damit von Beginn an ersichtlich war, wo etwas zu finden ist. Unter Documents befinden sich alle Dateien, die nicht direkt zu dem Code gehören, wie z.B. die Begründungen, Flussdiagramme oder Statistiken.
-In Bezug auf die Aufteilung und Modularisierung in verschiedene Header hatten wir eine Meinungsverschiedenheit in der Gruppe: Eine weitere Idee war es, Funktionen in die Header-Dateien "parking", "stats", "queue", "simulation" und "type" auszulagern. Es gab Befürwortungen für beide Ideen der Modularisierung, schließlich haben wir uns aber gemeinsam für die jetzige Aufteilung mit "config", "io", "parking", "queue", "rng", "simulation", "stats" und "types" entschieden, da es noch einmal getrennter war und noch mehr in kleine Bereiche unterteilt werden konnte.
-Ein Problem war, dass wir anfangs keine Pull Requests für das Pushen von Änderungen verwendet haben, sondern einfach direkt über die Bash gemergt haben. Dadurch wurde die Teamarbeit etwas eingeschränkt, da die Änderungen bereits vor dem Review auf dem Remote Repository lagen, und potenzielle falsche Änderungen auch direkt implementiert waren. Außerdem konnte man die Reviews nur über das Kanban Board über erstellte Issues geben, nicht direkt über einen Merge wie es bei Pull Requests der Fall wäre.
-Eine sehr positive Eigenschaft an dem Team war die Bereitwilligkeit, von seinen eigenen Ideen loszulassen, falls mehr Leute für eine andere Idee waren, oder falls man erkannt hat, dass der andere Lösungsvorschlag doch besser war. So konnte auch in Situationen mit Zeitknappheit gut und effektiv weitergearbeitet werden, ohne dass sich jemand quer stellte.
+Unser Ziel war es, die Parkhaus-Simulation übersichtlich, modular und gut erweiterbar umzusetzen. Die Simulation basiert auf diskreten Zeitschritten, in denen Fahrzeuge mit einer bestimmten Wahrscheinlichkeit ankommen, im Parkhaus parken und dieses nach Ablauf ihrer Parkdauer wieder verlassen.
+Zur Umsetzung haben wir das Parkhaus als feste Anzahl von Stellplätzen modelliert. Fahrzeuge werden als eigene Datenstruktur mit ID, verbleibender Parkdauer und Einfahrtszeitpunkt dargestellt. Falls keine Stellplätze frei sind, werden Fahrzeuge in einer dynamisch verwalteten Warteschlange gespeichert. Die Parkdauer sowie die Ankunft von Fahrzeugen werden mithilfe eines Zufallszahlengenerators bestimmt.
+Zur besseren Strukturierung des Projekts haben wir eine klare Ordnerstruktur mit „documents“, „include“, „src“ und „tests“ gewählt. Dadurch ist schnell ersichtlich, wo sich welche Bestandteile befinden.
+
+## Diskutierte Alternativen
+
+Im Team haben wir verschiedene Ansätze zur Modularisierung diskutiert. Eine Alternative war es, die Funktionalität stärker zu bündeln, beispielsweise in den Header-Dateien „parking“, „stats“, „queue“, „simulation“ und „types“.
+Dem gegenüber stand unser gewählter Ansatz mit einer feineren Aufteilung in „config“, „io“, „parking“, „queue“, „rng“, „simulation“, „stats“ und „types“.
+
+## Begründung der Entscheidung
+
+Wir haben uns für die feinere Modularisierung entschieden, da diese eine klarere Trennung der Verantwortlichkeiten ermöglicht. Einzelne Komponenten wie Zufallszahlengenerierung oder Ein-/Ausgabe sind dadurch unabhängig voneinander und leichter testbar.
+Außerdem verbessert diese Struktur die Wartbarkeit und Erweiterbarkeit des Programms, da Änderungen gezielt in einzelnen Modulen vorgenommen werden können, ohne andere Bereiche zu beeinflussen.
+
+## Herausforderungen in der Zusammenarbeit
+
+Eine Schwierigkeit bestand darin, dass wir zu Beginn keine Pull Requests verwendet haben, sondern Änderungen direkt über die Bash in den Main-Branch gemergt haben. Dadurch waren Änderungen sofort im Remote-Repository sichtbar, ohne zuvor ein Review durch andere Teammitglieder zu durchlaufen.
+Dies hat die Qualitätssicherung erschwert, da Feedback nur indirekt über das Kanban-Board und Issues erfolgen konnte. Im Verlauf des Projekts haben wir erkannt, dass Pull Requests eine strukturiertere Zusammenarbeit ermöglichen.
+
+## Positive Aspekte der Teamarbeit
+
+Besonders positiv war die Bereitschaft im Team, eigene Ideen zugunsten besserer Lösungen zurückzustellen. Dadurch konnten wir auch bei unterschiedlichen Meinungen schnell zu gemeinsamen Entscheidungen kommen.
+Dies hat es uns ermöglicht, effizient weiterzuarbeiten, auch unter Zeitdruck, und Konflikte konstruktiv zu lösen.
