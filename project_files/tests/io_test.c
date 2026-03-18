@@ -86,30 +86,108 @@ static void test_io_close_log_without_open_file_does_not_crash(void)
     assert(true);
 }
 
+/* =========================
+   io_log_step
+   ========================= */
+
 /**
  * @brief Prüft, dass io_log_step einen Step korrekt in die Log-Datei schreibt.
  */
 static void test_io_log_step_writes_step_data_to_file(void)
-{}
+{
+    const char* p_path = "test_io_log_step.txt";
+    char buffer[1024];
+    Stats stats;
+
+    stats_init(&stats);
+    stats.neu_angekommen = 2U;
+    stats.verlassen = 1U;
+    stats.abgefertigte_wartende = 1U;
+    stats.belegung = 4U;
+    stats.warteschlangenlaenge = 3U;
+    stats.sum_restparkdauer = 6U;
+    stats.count_restparkdauer = 2U;
+
+    assert(io_open_log(p_path) == true);
+    io_log_step(&stats, 5);
+    io_close_log();
+
+    assert(read_file_to_buffer(p_path, buffer, sizeof(buffer)) == true);
+    assert(strstr(buffer, "Step 5 | neu=2 | verlassen=1 | queue->park=1 | belegung=4 | queue=3") != NULL);
+    assert(strstr(buffer, "AvgRestGesamt=3.00") != NULL);
+
+    remove(p_path);
+}
+
 
 /**
  * @brief Prüft, dass io_log_step bei NULL-Statistik keinen Absturz verursacht.
  */
 static void test_io_log_step_with_null_stats_does_not_crash(void)
-{}
+{
+    const char* p_path = "test_io_log_step_null.txt";
+
+    assert(io_open_log(p_path) == true);
+    io_log_step(NULL, 1);
+    io_close_log();
+
+    remove(p_path);
+    assert(true);
+}
+
+/* =========================
+   io_log_final
+   ========================= */
 
 /**
  * @brief Prüft, dass io_log_step bei NULL-Statistik keinen Absturz verursacht.
  */
 static void test_io_log_step_with_null_stats_does_not_crash(void)
-{}
+{
+    const char* p_path = "test_io_log_final.txt";
+    char buffer[2048];
+    Stats stats;
 
+    stats_init(&stats);
+    stats.step_count = 2U;
+    stats.sum_belegung = 6U;
+    stats.sum_warteschlange = 2U;
+    stats.max_warteschlange = 2U;
+    stats.vollauslastung_steps = 1U;
+    stats.sum_wartezeit = 4U;
+    stats.count_wartezeit = 2U;
+    stats.sum_parkdauer = 8U;
+    stats.count_parkdauer = 2U;
+    stats.sum_restparkdauer = 5U;
+    stats.count_restparkdauer = 2U;
+
+    assert(io_open_log(p_path) == true);
+    io_log_final(&stats);
+    io_close_log();
+
+    assert(read_file_to_buffer(p_path, buffer, sizeof(buffer)) == true);
+    assert(strstr(buffer, "===== FINAL STATS =====") != NULL);
+    assert(strstr(buffer, "Ø Belegung: 3.00") != NULL);
+    assert(strstr(buffer, "Ø Warteschlange: 1.00") != NULL);
+    assert(strstr(buffer, "Max Warteschlange: 2") != NULL);
+
+    remove(p_path);
+}
 
 /**
  * @brief Prüft, dass io_log_final die Abschlussstatistik korrekt schreibt.
  */
 static void test_io_log_final_writes_final_statistics(void)
-{}
+{
+    const char* p_path = "test_io_log_final_null.txt";
+
+    assert(io_open_log(p_path) == true);
+    io_log_final(NULL);
+    io_close_log();
+
+    remove(p_path);
+    assert(true);
+}
 
 int main(void)
 {
