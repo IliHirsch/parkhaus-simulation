@@ -125,6 +125,14 @@ static void test_parking_find_free_slot_returns_minus_one_when_full(void)
     parking_free(&parking);
 }
 
+/* =========================
+   parking_handle_arrival
+   ========================= */
+
+static void test_parking_handle_arrival_parks_vehicle_when_slot_is_free(void)
+{}
+static void test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free(void)
+{}
 
 
 int main (){
@@ -137,6 +145,9 @@ int main (){
 
     test_parking_find_free_slot_returns_first_free_index();
     test_parking_find_free_slot_returns_minus_one_when_full();
+
+    test_parking_handle_arrival_parks_vehicle_when_slot_is_free();
+    test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free();
 
     printf("Alle Parking-Tests erfolgreich.\n");
     return 0;
