@@ -63,3 +63,25 @@ static void test_cfg_val_invalid_prob(void){
 
     assert(config_validate(&cfg) == false);
 }
+
+/* =========================
+   config_read_from_terminal
+   ========================= */
+
+static void test_cfg_read_valid(void){
+    const char* p_path = "test_config_valid_input.txt";
+    SimConfig cfg;
+
+    assert(write_text_file(p_path, "12\n7\n30\n40\n99\n") == true);
+    assert(redirect_stdin_to_file(p_path) == true);
+
+    assert(config_read_from_terminal(&cfg) == true);
+
+    assert(cfg.anzahl_stellplaetze == 12U);
+    assert(cfg.max_parkdauer == 7);
+    assert(cfg.sim_dauer_zeitschritte == 30);
+    assert(cfg.ankunft_wahrscheinlichkeit_prozent == 40);
+    assert(cfg.seed == 99U);
+
+    remove(p_path);
+}
