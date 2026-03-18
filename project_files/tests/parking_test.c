@@ -10,7 +10,12 @@
 #include "../include/config.h"
 
 /**
- * @brief Hilfsfunktion zum Erzeugen eines Fahrzeugs.
+ * @brief Erzeugt ein Test-Fahrzeug mit den übergebenen Werten.
+ *
+ * @param[in] id Fahrzeug-ID.
+ * @param[in] restparkdauer Verbleibende Parkdauer.
+ * @param[in] ankunftszeit Ankunftszeit des Fahrzeugs.
+ * @return Initialisiertes Vehicle.
  */
 static Vehicle make_vehicle(unsigned int id, int restparkdauer, int ankunftszeit)
 {
@@ -22,7 +27,11 @@ static Vehicle make_vehicle(unsigned int id, int restparkdauer, int ankunftszeit
 }
 
 /**
- * @brief Hilfsfunktion zum Erzeugen einer gültigen Test-Konfiguration.
+ * @brief Erzeugt eine gültige Test-Konfiguration.
+ *
+ * @param[in] kapazitaet Anzahl Stellplätze.
+ * @param[in] max_parkdauer Maximale Parkdauer.
+ * @return Initialisierte SimConfig.
  */
 static SimConfig make_config(size_t kapazitaet, int max_parkdauer)
 {
@@ -39,6 +48,9 @@ static SimConfig make_config(size_t kapazitaet, int max_parkdauer)
    parking_init
    ========================= */
 
+/**
+ * @brief Prüft, dass parking_init ein leeres Parkhaus korrekt initialisiert.
+ */
 static void test_parking_init_creates_empty_parking_lot(void)
 {
     ParkingLot parking;
@@ -55,6 +67,10 @@ static void test_parking_init_creates_empty_parking_lot(void)
 
     parking_free(&parking);
 }
+
+/**
+ * @brief Prüft, dass parking_init bei Kapazität 0 false zurückgibt.
+ */
 static void test_parking_init_with_zero_capacity_returns_false(void)
 {
     ParkingLot parking;
@@ -67,6 +83,9 @@ static void test_parking_init_with_zero_capacity_returns_false(void)
    parking_free
    ========================= */
 
+/**
+ * @brief Prüft, dass parking_free alle Felder des Parkhauses zurücksetzt.
+ */
 static void test_parking_free_resets_all_fields(void)
 {
     ParkingLot parking;
@@ -84,6 +103,9 @@ static void test_parking_free_resets_all_fields(void)
     assert(parking.belegte_plaetze == 0U);
 }
 
+/**
+ * @brief Prüft, dass parking_free(NULL) keinen Absturz verursacht.
+ */
 static void test_parking_free_with_null_does_not_crash(void)
 {
     parking_free(NULL);
@@ -94,6 +116,9 @@ static void test_parking_free_with_null_does_not_crash(void)
    parking_find_free_slot
    ========================= */
 
+/**
+ * @brief Prüft, dass parking_find_free_slot den ersten freien Index liefert.
+ */
 static void test_parking_find_free_slot_returns_first_free_index(void)
 {
     ParkingLot parking;
@@ -110,6 +135,9 @@ static void test_parking_find_free_slot_returns_first_free_index(void)
     parking_free(&parking);
 }
 
+/**
+ * @brief Prüft, dass parking_find_free_slot bei vollem Parkhaus -1 liefert.
+ */
 static void test_parking_find_free_slot_returns_minus_one_when_full(void)
 {
     ParkingLot parking;
@@ -129,6 +157,10 @@ static void test_parking_find_free_slot_returns_minus_one_when_full(void)
    parking_handle_arrival
    ========================= */
 
+/**
+ * @brief Prüft, dass ein ankommendes Fahrzeug direkt eingeparkt wird,
+ *        wenn ein freier Stellplatz vorhanden ist.
+ */
 static void test_parking_handle_arrival_parks_vehicle_when_slot_is_free(void)
 {
      ParkingLot parking;
@@ -169,6 +201,10 @@ static void test_parking_handle_arrival_parks_vehicle_when_slot_is_free(void)
     parking_free(&parking);
 }
 
+/**
+ * @brief Prüft, dass ein ankommendes Fahrzeug in die Warteschlange kommt,
+ *        wenn kein freier Stellplatz vorhanden ist.
+ */
 static void test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free(void)
 {
     ParkingLot parking;
@@ -218,6 +254,10 @@ static void test_parking_handle_arrival_queues_vehicle_when_no_slot_is_free(void
    parking_process_departures
    ========================= */
 
+/**
+ * @brief Prüft, dass parking_process_departures die Restparkdauer
+ *        belegter Fahrzeuge korrekt reduziert.
+ */
 static void test_parking_process_departures_decrements_restparkdauer(void)
 {
     ParkingLot parking;
@@ -240,6 +280,10 @@ static void test_parking_process_departures_decrements_restparkdauer(void)
     parking_free(&parking);
 }
 
+/**
+ * @brief Prüft, dass Fahrzeuge entfernt werden, wenn ihre Restparkdauer
+ *        auf 0 oder kleiner fällt.
+ */
 static void test_parking_process_departures_removes_vehicle_when_restparkdauer_reaches_zero(void)
 {
     ParkingLot parking;
@@ -261,6 +305,73 @@ static void test_parking_process_departures_removes_vehicle_when_restparkdauer_r
     parking_free(&parking);
 }
 
+/* =========================
+   parking_process_queue
+   ========================= */
+
+/**
+ * @brief Prüft, dass ein wartendes Fahrzeug aus der Queue auf einen
+ *        freien Stellplatz übernommen wird.
+ */
+static void test_parking_process_queue_moves_waiting_vehicle_into_free_slot(void)
+{
+    ParkingLot parking;
+    Queue queue;
+    Stats stats;
+
+    assert(parking_init(&parking, 2U) == true);
+    queue_init(&queue);
+    stats_init(&stats);
+
+    assert(queue_push(&queue, make_vehicle(10U, 4, 2)) == true);
+
+    parking_process_queue(&parking, &queue, &stats, 5);
+
+    assert(queue_size(&queue) == 0U);
+    assert(parking.belegte_plaetze == 1U);
+    assert(parking.slots[0].belegt == true);
+    assert(parking.slots[0].fahrzeug.id == 10U);
+
+    assert(stats.abgefertigte_wartende == 1U);
+    assert(stats.sum_wartezeit == 3U);
+    assert(stats.count_wartezeit == 1U);
+
+    queue_free(&queue);
+    parking_free(&parking);
+}
+
+/**
+ * @brief Prüft, dass Fahrzeuge in der Queue bleiben, wenn kein freier
+ *        Stellplatz vorhanden ist.
+ */
+static void test_parking_process_queue_keeps_vehicle_waiting_when_no_slot_is_free(void)
+{
+    ParkingLot parking;
+    Queue queue;
+    Stats stats;
+
+    assert(parking_init(&parking, 1U) == true);
+    queue_init(&queue);
+    stats_init(&stats);
+
+    parking.slots[0].belegt = true;
+    parking.slots[0].fahrzeug = make_vehicle(99U, 2, 0);
+    parking.belegte_plaetze = 1U;
+
+    assert(queue_push(&queue, make_vehicle(10U, 4, 2)) == true);
+
+    parking_process_queue(&parking, &queue, &stats, 5);
+
+    assert(queue_size(&queue) == 1U);
+    assert(parking.belegte_plaetze == 1U);
+    assert(stats.abgefertigte_wartende == 0U);
+    assert(stats.sum_wartezeit == 0U);
+    assert(stats.count_wartezeit == 0U);
+
+    queue_free(&queue);
+    parking_free(&parking);
+}
+
 
 int main (){
 
@@ -278,6 +389,9 @@ int main (){
 
     test_parking_process_departures_decrements_restparkdauer();
     test_parking_process_departures_removes_vehicle_when_restparkdauer_reaches_zero();
+
+    test_parking_process_queue_moves_waiting_vehicle_into_free_slot();
+    test_parking_process_queue_keeps_vehicle_waiting_when_no_slot_is_free();
 
     printf("Alle Parking-Tests erfolgreich.\n");
     return 0;
