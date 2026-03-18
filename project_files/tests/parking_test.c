@@ -68,9 +68,26 @@ static void test_parking_init_with_zero_capacity_returns_false(void)
    ========================= */
 
 static void test_parking_free_resets_all_fields(void)
-{}
+{
+    ParkingLot parking;
+    bool ok = parking_init(&parking, 2U);
+
+    assert(ok == true);
+
+    parking.slots[0].belegt = true;
+    parking.belegte_plaetze = 1U;
+
+    parking_free(&parking);
+
+    assert(parking.slots == NULL);
+    assert(parking.kapazitaet == 0U);
+    assert(parking.belegte_plaetze == 0U);
+}
 static void test_parking_free_with_null_does_not_crash(void)
-{}
+{
+    parking_free(NULL);
+    assert(true);
+}
 
 
 
