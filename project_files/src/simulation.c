@@ -1,12 +1,12 @@
-#include "simulation.h"
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "io.h"
-#include "parking.h"
-#include "queue.h"
-#include "rng.h"
-#include "stats.h"
+#include "../include/simulation.h"
+#include "../include/io.h"
+#include "../include/parking.h"
+#include "../include/queue.h"
+#include "../include/rng.h"
+#include "../include/stats.h"
 
 /**
  * @brief Simuliert genau einen Zeitschritt.

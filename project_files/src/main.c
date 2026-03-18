@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "config.h"
-#include "simulation.h"
+#include "../include/config.h"
+#include "../include/simulation.h"
 
 /**
  * @brief Startpunkt des Programms.
