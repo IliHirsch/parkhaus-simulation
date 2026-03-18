@@ -37,3 +37,18 @@ static bool redirect_stdin_to_file(const char* path){
     FILE* p_file = freopen(path, "r", stdin);
     return (p_file != NULL);
 }
+
+/* =========================
+   config_validate
+   ========================= */
+
+static void test_cfg_val_valid(void){
+    SimConfig cfg;
+    cfg.anzahl_stellplaetze = 10U;
+    cfg.max_parkdauer = 5;
+    cfg.sim_dauer_zeitschritte = 20;
+    cfg.ankunft_wahrscheinlichkeit_prozent = 50;
+    cfg.seed = 123U;
+
+    assert(config_validate(&cfg) == true);
+}
