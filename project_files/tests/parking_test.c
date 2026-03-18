@@ -35,9 +35,22 @@ static SimConfig make_config(size_t kapazitaet, int max_parkdauer)
     return cfg;
 }
 
+/* =========================
+   parking_init
+   ========================= */
+
+static void test_parking_init_creates_empty_parking_lot(void)
+{}
+static void test_parking_init_with_zero_capacity_returns_false(void)
+{}
+
+
 
 
 int main (){
+
+    test_parking_init_creates_empty_parking_lot();
+    test_parking_init_with_zero_capacity_returns_false();
 
 
     printf("Alle Parking-Tests erfolgreich.\n");
