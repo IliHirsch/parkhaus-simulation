@@ -1,4 +1,4 @@
-# Erklärung und Reflexion des Projektes
+# Erklärung und Reflexion des Projekts
 
 ## Lösung der Aufgabenstellung
 
@@ -6,12 +6,10 @@ Unser Ziel war es, die Parkhaus-Simulation übersichtlich, modular und gut erwei
 Zur Umsetzung haben wir das Parkhaus als feste Anzahl von Stellplätzen modelliert. Fahrzeuge werden als eigene Datenstruktur mit ID, verbleibender Parkdauer und Einfahrtszeitpunkt dargestellt. Falls keine Stellplätze frei sind, werden Fahrzeuge in einer dynamisch verwalteten Warteschlange gespeichert. Die Parkdauer sowie die Ankunft von Fahrzeugen werden mithilfe eines Zufallszahlengenerators bestimmt.
 Zur besseren Strukturierung des Projekts haben wir eine klare Ordnerstruktur mit „documents“, „include“, „src“ und „tests“ gewählt. Dadurch ist schnell ersichtlich, wo sich welche Bestandteile befinden.
 
-## Diskutierte Alternativen
+## Diskutierte Alternativen und Begründung der Entscheidung
 
 Im Team haben wir verschiedene Ansätze zur Modularisierung diskutiert. Eine Alternative war es, die Funktionalität stärker zu bündeln, beispielsweise in den Header-Dateien „parking“, „stats“, „queue“, „simulation“ und „types“.
 Dem gegenüber stand unser gewählter Ansatz mit einer feineren Aufteilung in „config“, „io“, „parking“, „queue“, „rng“, „simulation“, „stats“ und „types“.
-
-## Begründung der Entscheidung
 
 Wir haben uns für die feinere Modularisierung entschieden, da diese eine klarere Trennung der Verantwortlichkeiten ermöglicht. Einzelne Komponenten wie Zufallszahlengenerierung oder Ein-/Ausgabe sind dadurch unabhängig voneinander und leichter testbar.
 Außerdem verbessert diese Struktur die Wartbarkeit und Erweiterbarkeit des Programms, da Änderungen gezielt in einzelnen Modulen vorgenommen werden können, ohne andere Bereiche zu beeinflussen.
